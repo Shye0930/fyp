@@ -16,15 +16,10 @@ ros2 pkg prefix camera_calibration
 ## Moving of edited files
 In your directory `/opt/ros/foxy/lib/python3.8/site-packages` do 
 ```shell
-sudo rm -r /opt/ros/foxy/lib/python3.8/site-packages/camera_calibration/calibrator.py
-sudo rm -r /opt/ros/foxy/lib/python3.8/site-packages/camera_calibration.py
-sudo rm -r /opt/ros/foxy/lib/python3.8/site-packages/camera_checker.py
+sudo rm -rf /opt/ros/foxy/lib/python3.8/site-packages/camera_calibration # Remove the folder
 
 # Afterwards move the files within the assets folder to the dest folder
-sudo mv /home/<your name>/Desktop/projects/fyp/Installation Guide/assets/camera_calibrator.py /opt/ros/foxy/lib/python3.8/site-packages/
-sudo mv /home/<your name>/Desktop/projects/fyp/Installation Guide/assets/camera_checker.py /opt/ros/foxy/lib/python3.8/site-packages/
-sudo mv /home/<your name>/Desktop/projects/fyp/Installation Guide/assets/mono_calibrator.py /opt/ros/foxy/lib/python3.8/site-packages/
-sudo mv /home/<your name>/Desktop/projects/fyp/Installation Guide/assets/stereo_calibrator.py /opt/ros/foxy/lib/python3.8/site-packages/
+sudo cp -r /home/<your name>/Desktop/projects/fyp/Installation Guide/assets/camera_calibration /opt/ros/foxy/lib/python3.8/site-packages/
 ```
 
 ## Arduino Code for esp32 camera
@@ -112,7 +107,7 @@ void setup() {
   // config.fb_count = 1;
 
 
-  camera_config_t config;
+ camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
   config.pin_d0 = Y2_GPIO_NUM;
@@ -137,7 +132,7 @@ void setup() {
 
 
   current_cam_framesize = FRAMESIZE_HVGA;
-  current_cam_quality = 25; //10-63 lower number means higher quality
+  current_cam_quality = 15; //10-63 lower number means higher quality
   current_cam_gain = (gainceiling_t)0;
 
   config.frame_size = current_cam_framesize;
@@ -570,6 +565,15 @@ if __name__ == '__main__':
 
 ```
 
+### Input the camera IP
+In the 2 statement below, change them to your corresponding ESP32 camera IP
+
+```python
+self.left_url = 'http://192.168.68.57'
+self.right_url = 'http://192.168.68.56' #USB-C module
+```
+
+
 I am using a 6x9 checkboard of size:30mm
 
 To determine the size of the checkboard, do note that 
@@ -581,7 +585,7 @@ Hence the command is
 ros2 run camera_calibration cameracalibrator --approximate 0.1 --size 8x5 --square 0.029 right:=/stereo/right/image_raw left:=/stereo/left/image_raw right_camera:=/stereo/right left_camera:=/stereo/left
 
 ```
-Afterwards, ensure that in the display you set to the correct lens.
+Afterwards, ensure that in the display you set to the **correct** (pinhole/fisheye) lens.
 
 ![image](./assets/camera_calibrator_display.png)
 
@@ -604,6 +608,8 @@ In order to get a good calibration you will need to move the checkerboard around
 
 ### Saving the calibration
 After the program has automatically taken enough samples, you should be able to press the calibrate button and save the config. Do not press the `config` button as it is not applicable to the ESP32-Camera
+
+Additionally, the console should have printed some logs and you will need to **__save__** the text below `Stereo pinhole calibration` as it contains the T and R matrix to compute the Stereo.T_c1_c2 for our orb slam3 config later on.
 
 
 

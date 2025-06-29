@@ -172,6 +172,8 @@ class StereoCalibrator(Calibrator):
             print(f"Stereo RMS re-projection error: {ret_values[0]}")
         elif self.camera_model == CAMERA_MODEL.FISHEYE:
             print("stereo fisheye calibration...")
+
+            print("stereo fisheye calibration... in stereo_calibrator.py")
             if VersionInfo.parse(cv2.__version__).major < 3:
                 print("ERROR: You need OpenCV >3 to use fisheye camera model")
                 sys.exit()
@@ -184,7 +186,7 @@ class StereoCalibrator(Calibrator):
                 opts64 = numpy.asarray(opts, dtype=numpy.float64)
                 opts = opts64
 
-                cv2.fisheye.stereoCalibrate(opts, lipts, ripts,
+                ret_values, CM1, D1, CM2, D2, R, T, E, F = cv2.fisheye.stereoCalibrate(opts, lipts, ripts,
                                             self.l.intrinsics, self.l.distortion,
                                             self.r.intrinsics, self.r.distortion,
                                             self.size,
@@ -194,6 +196,16 @@ class StereoCalibrator(Calibrator):
                                             criteria=(
                                                 cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 1, 1e-5),
                                             flags=flags)
+                print(f"Stereo Calibration RMS Error: {ret}")
+                print("Rotation matrix (R, from camera2 to camera1):\n", R)
+                print("Translation vector (T, from camera2 to camera1):\n", T)
+
+                T_c1_c2_matrix = np.eye(4)
+                T_c1_c2_matrix[:3, :3] = R
+                T_c1_c2_matrix[:3, 3] = T.flatten() # Flatten the translation vector to a 1D array
+
+                print("\nStereo.T_c1_c2 (from camera2 to camera1):\n", T_c1_c2_matrix)
+
 
         self.set_alpha(0.0)
 
