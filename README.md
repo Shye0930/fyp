@@ -1,1 +1,7 @@
 # fyp
+
+| Proj # 	| CCDS24-0982 	|
+|---	|---	|
+| Acad Yr/ Sem 	| 2024/2 	|
+| Proj Title 	| Smart Navigation Device for the Visually Impaired 	|
+| Proj Summary 	| This project aims to build wearable devices that can guide people with visual impairment in indoor navigation such as home, retail establishments. The core technology for achieving this is visual localization and mapping. When the user enters the environment, a map will be downloaded to the device. The wearable devices will run visual localization that tracks the movement of the user over time. In addition, the wearable device will a provide audio/tactile feedback to the user to ensure safe and comfortable navigation. 	|
