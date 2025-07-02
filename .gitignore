@@ -1,0 +1,26 @@
+# Ignore all build folders
+**/build/
+
+# Ignore ROS/colcon build artifacts
+ros_ws/build/
+ros_ws/install/
+ros_ws/log/
+
+# Ignore binaries and intermediate files
+*.bin
+*.o
+*.so
+*.log
+*.tmp
+
+# Ignore the vocabulary files (if you regenerate them)
+Vocabulary/ORBvoc.txt
+Vocabulary/ORBvoc.bin
+
+# Ignore VSCode or JetBrains IDE settings (optional)
+.vscode/
+.idea/
+
+# Ignore Python cache if you use Python
+__pycache__/
+*.pyc
