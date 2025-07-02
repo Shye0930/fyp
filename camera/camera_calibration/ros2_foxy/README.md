@@ -177,7 +177,7 @@ void setup() {
     s->set_brightness(s, -2);   // up the brightness just a bit
     s->set_contrast(s, 0);
     s->set_saturation(s,2);
-    s->set_hmirror(s,0);
+    s->set_hmirror(s,1);
     s->set_gainceiling(s, current_cam_gain);
   }
 
