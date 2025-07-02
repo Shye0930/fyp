@@ -1,1 +1,0 @@
-/home/shye/Desktop/projects/fyp/ros_ws/src/orbslam3/src/camera_publisher.py
