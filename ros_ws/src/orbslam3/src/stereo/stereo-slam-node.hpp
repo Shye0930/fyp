@@ -41,6 +41,10 @@ private:
     std::shared_ptr<message_filters::Subscriber<sensor_msgs::msg::Image> > left_sub;
     std::shared_ptr<message_filters::Subscriber<sensor_msgs::msg::Image> > right_sub;
 
+    // Add Publishers for rectified images
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_rectified_left;
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_rectified_right;
+
     std::shared_ptr<message_filters::Synchronizer<approximate_sync_policy> > syncApproximate;
 };
 

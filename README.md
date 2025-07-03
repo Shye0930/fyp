@@ -19,4 +19,20 @@ ros2 run orbslam3 stereo ORB_SLAM_3_COMMUNITY/Vocabulary/ORBvoc.txt config/stere
 
 ```
 
+## Debug info used through the repo
 
+[INFO]: For informational messages, especially when the code is doing something expected but noteworthy (e.g., successful initialization, a specific mode being activated).
+
+[DEBUG]: For messages related to debugging specific issues or temporary print statements you might remove later.
+
+[WARN]: For potential issues that don't stop execution but might lead to problems (e.g., a default value being used because a parameter was missing).
+
+[ERROR]: For critical errors that prevent the code from functioning correctly.
+
+[TODO]: For features or improvements that need to be implemented.
+
+[FIXME]: For known bugs that need fixing.
+
+[HACK]: For a workaround that might not be the cleanest solution but gets the job done for now.
+
+[NOTE]: For important design decisions or caveats.

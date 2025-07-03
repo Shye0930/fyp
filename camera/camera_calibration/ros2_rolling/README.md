@@ -495,12 +495,9 @@ To determine the size of the checkboard, do note that
 
 Hence the command is 
 ```sh
-ros2 run camera_calibration cameracalibrator --approximate 0.1 --size 8x5 --square 0.029 --fix-aspect-ratio --fix-principal-point  right:=/stereo/right/image_raw left:=/stereo/left/image_raw right_camera:=/stereo/right left_camera:=/stereo/left
+ros2 run camera_calibration cameracalibrator --approximate 0.1 --size 8x5 --square 0.029 right:=/stereo/right/image_raw left:=/stereo/left/image_raw right_camera:=/stereo/right left_camera:=/stereo/left
 
 # Calibration Optimizer Options:
-#     --fix-principal-point
-#                         for pinhole, fix the principal point at the image
-#                         center
 #     --fix-aspect-ratio  for pinhole, enforce focal lengths (fx, fy) are equal
 ```
 Afterwards, ensure that in the display you set to the **correct** (pinhole/fisheye) lens.

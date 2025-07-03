@@ -31,6 +31,18 @@ Camera1.k2: 0.0
 Camera1.p1: 0.0
 Camera1.p2: 0.0
 
+# Camera 2 intrinsics is only needed for Camera.type: "Pinhole"
+Camera2.fx: 495.56901
+Camera2.fy: 495.56901
+Camera2.cx: 201.01805
+Camera2.cy: 159.34463
+
+Camera2.k1: 0.0
+Camera2.k2: 0.0
+Camera2.p1: 0.0
+Camera2.p2: 0.0
+
+
 Camera.width: 480
 Camera.height: 320
 

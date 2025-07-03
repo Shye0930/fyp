@@ -18,7 +18,7 @@ class CameraStreamThread(threading.Thread):
         self.ret = False
         self.running = True
         self.frame_lock = threading.Lock() # To protect access to latest_frame
-        self.set_flash(128)
+        self.set_flash(0)
 
 
     def set_flash(self, intensity):
@@ -77,13 +77,13 @@ class StereoCameraPublisher(Node):
 
     def __init__(self):
         super().__init__('stereo_camera_publisher')
-        self.left_image_pub = self.create_publisher(Image, 'camera/left', 10)
-        self.right_image_pub = self.create_publisher(Image, 'camera/right', 10)
+        self.left_image_pub = self.create_publisher(Image, '/stereo/left/image_raw', 10)
+        self.right_image_pub = self.create_publisher(Image, '/stereo/right/image_raw', 10)
         self.left_info_pub = self.create_publisher(CameraInfo, '/stereo/left/camera_info', 10)
         self.right_info_pub = self.create_publisher(CameraInfo, '/stereo/right/camera_info', 10)
         self.bridge = CvBridge()
 
-        self.left_url = 'http://192.168.68.58'
+        self.left_url = 'http://192.168.68.55'
         self.right_url = 'http://192.168.68.60' #USB-C module
 
         # Create dedicated threads for each camera
