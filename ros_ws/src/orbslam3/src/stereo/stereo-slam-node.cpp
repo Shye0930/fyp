@@ -12,6 +12,8 @@ StereoSlamNode::StereoSlamNode(ORB_SLAM3::System* pSLAM, const string &strSettin
     stringstream ss(strDoRectify);
     ss >> boolalpha >> doRectify;
 
+    std::cout << "[INFO] doRectify is " << doRectify << endl;
+
     if (doRectify){
 
         cv::FileStorage fsSettings(strSettingsFile, cv::FileStorage::READ);
@@ -39,8 +41,23 @@ StereoSlamNode::StereoSlamNode(ORB_SLAM3::System* pSLAM, const string &strSettin
         int cols_r = fsSettings["RIGHT.width"];
 
         if(K_l.empty() || K_r.empty() || P_l.empty() || P_r.empty() || R_l.empty() || R_r.empty() || D_l.empty() || D_r.empty() ||
-                rows_l==0 || rows_r==0 || cols_l==0 || cols_r==0){
+   rows_l==0 || rows_r==0 || cols_l==0 || cols_r==0){
             cerr << "ERROR: Calibration parameters to rectify stereo are missing!" << endl;
+
+            if (K_l.empty()) cerr << "  K_l is empty." << endl;
+            if (K_r.empty()) cerr << "  K_r is empty." << endl;
+            if (P_l.empty()) cerr << "  P_l is empty." << endl;
+            if (P_r.empty()) cerr << "  P_r is empty." << endl;
+            if (R_l.empty()) cerr << "  R_l is empty." << endl;
+            if (R_r.empty()) cerr << "  R_r is empty." << endl;
+            if (D_l.empty()) cerr << "  D_l is empty." << endl;
+            if (D_r.empty()) cerr << "  D_r is empty." << endl;
+
+            if (rows_l == 0) cerr << "  rows_l is zero." << endl;
+            if (rows_r == 0) cerr << "  rows_r is zero." << endl;
+            if (cols_l == 0) cerr << "  cols_l is zero." << endl;
+            if (cols_r == 0) cerr << "  cols_r is zero." << endl;
+
             assert(0);
         }
 

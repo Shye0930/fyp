@@ -1,0 +1,133 @@
+%YAML:1.0
+
+#--------------------------------------------------------------------------------------------
+# System config
+#--------------------------------------------------------------------------------------------
+
+# When the variables are commented, the system doesn't load a previous session or not store the current one
+
+# If the LoadFile doesn't exist, the system give a message and create a new Atlas from scratch
+#System.LoadAtlasFromFile: "Session_MH01_MH02_MH03_Stereo60_Pseudo"
+
+# The store file is created from the current session, if a file with the same name exists it is deleted
+#System.SaveAtlasToFile: "Session_MH01_MH02_MH03_Stereo60_Pseudo"
+
+#--------------------------------------------------------------------------------------------
+# Camera Parameters. Adjust them!
+#--------------------------------------------------------------------------------------------
+File.version: "1.0"
+
+Camera.type: "Rectified"
+
+# Camera calibration and distortion parameters (OpenCV) 
+# Get intrinsic value from left camera
+Camera1.fx: 495.56901
+Camera1.fy: 495.56901
+Camera1.cx: 201.01805
+Camera1.cy: 159.34463
+
+Camera1.k1: 0.0
+Camera1.k2: 0.0
+Camera1.p1: 0.0
+Camera1.p2: 0.0
+
+Camera.width: 480
+Camera.height: 320
+
+# Camera frames per second 
+Camera.fps: 20
+
+# stereo baseline times fx (in meters) (NOT NEEDED IN ORB SLAM 3)
+Camera.bf: 38.65438278
+
+Stereo.b: 0.078
+
+# Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
+Camera.RGB: 1
+
+# Close/Far threshold. Baseline times.
+Stereo.ThDepth: 35.0 #60.0
+
+
+#--------------------------------------------------------------------------------------------
+# Stereo Rectification. Only if you need to pre-rectify the images.
+# Camera.fx, .fy, etc must be the same as in LEFT.P
+#--------------------------------------------------------------------------------------------
+LEFT.width: 480
+LEFT.height: 320
+LEFT.D: !!opencv-matrix
+  rows: 1
+  cols: 5
+  dt: d
+  data: [-0.07854939232689595, 0.1496464146806356, -0.006615764479630712, -0.0013642083253819766, 0.0]
+LEFT.K: !!opencv-matrix
+  rows: 3
+  cols: 3
+  dt: d
+  data: [462.7133573010584, 0.0, 239.5, 0.0, 462.7133573010584, 159.5, 0.0, 0.0, 1.0]
+LEFT.R:  !!opencv-matrix
+  rows: 3
+  cols: 3
+  dt: d
+  data: [0.9981628878578797, -0.012081761607659868, 0.05937070270489982, 0.011207248047782392, 0.9998240719710748, 0.01504070139238137, -0.059541975902831806, -0.014347687745242471, 0.9981226863276635]
+LEFT.P:  !!opencv-matrix
+  rows: 3
+  cols: 4
+  dt: d
+  data: [495.56901109778266, 0.0, 201.0180549621582, 0.0, 0.0, 495.56901109778266, 159.34462547302246, 0.0, 0.0, 0.0, 1.0, 0.0]
+
+RIGHT.width: 480
+RIGHT.height: 320
+RIGHT.D: !!opencv-matrix
+  rows: 1
+  cols: 5
+  dt: d
+  data:[-0.0363155883898657, 0.0016650626790761078, 0.005734791413771848, -0.0008201163457848612, 0.0]
+RIGHT.K: !!opencv-matrix
+  rows: 3
+  cols: 3
+  dt: d
+  data: [457.5638324571468, 0.0, 239.5, 0.0, 457.5638324571468, 159.5, 0.0, 0.0, 1.0]
+RIGHT.R:  !!opencv-matrix
+  rows: 3
+  cols: 3
+  dt: d
+  data: [0.9975836220695535, 0.0008093498438453235, 0.06947130293452364, 0.00021264924178033092, 0.9998918906577303, -0.014702441198983304, -0.06947569185614533, 0.014681687564440903, 0.9974756018526819]
+RIGHT.P:  !!opencv-matrix
+  rows: 3
+  cols: 4
+  dt: d
+  data: [495.56901109778266, 0.0, 201.0180549621582, -39.67971831115875, 0.0, 495.56901109778266, 159.34462547302246, 0.0, 0.0, 0.0, 1.0, 0.0]
+
+#--------------------------------------------------------------------------------------------
+# ORB Parameters
+#--------------------------------------------------------------------------------------------
+# ORB Extractor: Number of features per image
+ORBextractor.nFeatures: 1250
+
+# ORB Extractor: Scale factor between levels in the scale pyramid 	
+ORBextractor.scaleFactor: 1.2
+
+# ORB Extractor: Number of levels in the scale pyramid	
+ORBextractor.nLevels: 8
+
+# ORB Extractor: Fast threshold
+# Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
+# Firstly we impose iniThFAST. If no corners are detected we impose a lower value minThFAST
+# You can lower these values if your images have low contrast			
+ORBextractor.iniThFAST: 20
+ORBextractor.minThFAST: 7
+
+#--------------------------------------------------------------------------------------------
+# Viewer Parameters
+#--------------------------------------------------------------------------------------------
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1.0
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2.0
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3.0
+Viewer.ViewpointX: 0.0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -3.5
+Viewer.ViewpointF: 500.0
