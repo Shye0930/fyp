@@ -67,6 +67,9 @@ StereoSlamNode::StereoSlamNode(ORB_SLAM3::System* pSLAM, const string &strSettin
     left_sub = std::make_shared<message_filters::Subscriber<ImageMsg> >(shared_ptr<rclcpp::Node>(this), "/stereo/left/image_raw");
     right_sub = std::make_shared<message_filters::Subscriber<ImageMsg> >(shared_ptr<rclcpp::Node>(this), "/stereo/left/image_raw");
 
+    pub_rectified_left = this->create_publisher<sensor_msgs::msg::Image>("/stereo/left/rectified_images", 10);
+    pub_rectified_right = this->create_publisher<sensor_msgs::msg::Image>("/stereo/right/rectified_images", 10);
+
     syncApproximate = std::make_shared<message_filters::Synchronizer<approximate_sync_policy> >(approximate_sync_policy(10), *left_sub, *right_sub);
     syncApproximate->registerCallback(&StereoSlamNode::GrabStereo, this);
 }
@@ -112,10 +115,6 @@ void StereoSlamNode::GrabStereo(const ImageMsg::SharedPtr msgLeft, const ImageMs
 
         //[HACK] Publish the rectified camera 
         cv_bridge::CvImage cv_img_left_rectified, cv_img_right_rectified;
-
-        // Initialize publishers for rectified images
-        pub_rectified_left = this->create_publisher<sensor_msgs::msg::Image>("/stereo/left/rectified_images", 10);
-        pub_rectified_right = this->create_publisher<sensor_msgs::msg::Image>("/stereo/right/rectified_images", 10);
 
         // Left rectified
         cv_img_left_rectified.header = msgLeft->header; // Use original message header for timestamp and frame_id
