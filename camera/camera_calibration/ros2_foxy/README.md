@@ -179,6 +179,11 @@ void setup() {
     s->set_saturation(s,2);
     s->set_hmirror(s,1);
     s->set_gainceiling(s, current_cam_gain);
+    s->set_whitebal(s, 0);      // Disable Auto White Balance (AWB)
+    s->set_awb_gain(s, 0);      // Disable AWB gain control
+    // s->set_saturation(s, 0);    // Set saturation to neutral (0 is default, -2 to 2 range)
+    //                             // If you want to keep the current saturation (2) but disable AWB,
+    //                             // leave this line as s->set_saturation(s,2);
   }
 
 

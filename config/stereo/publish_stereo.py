@@ -83,8 +83,8 @@ class StereoCameraPublisher(Node):
         self.right_info_pub = self.create_publisher(CameraInfo, '/stereo/right/camera_info', 10)
         self.bridge = CvBridge()
 
-        self.left_url = 'http://192.168.68.55'
-        self.right_url = 'http://192.168.68.60' #USB-C module
+        self.left_url = 'http://192.168.68.60'
+        self.right_url = 'http://192.168.68.62' #USB-C module
 
         # Create dedicated threads for each camera
         self.left_cam_thread = CameraStreamThread(self.left_url, "left", self)

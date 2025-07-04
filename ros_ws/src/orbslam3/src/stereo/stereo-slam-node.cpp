@@ -12,8 +12,9 @@ StereoSlamNode::StereoSlamNode(ORB_SLAM3::System* pSLAM, const string &strSettin
     stringstream ss(strDoRectify);
     ss >> boolalpha >> doRectify;
 
-    std::cout << "[INFO] doRectify is " << doRectify << endl;
-
+    
+    std::cout << "[INFO] doRectify is " << (doRectify ? "true" : "false") << std::endl;
+    
     if (doRectify){
 
         cv::FileStorage fsSettings(strSettingsFile, cv::FileStorage::READ);
@@ -64,11 +65,11 @@ StereoSlamNode::StereoSlamNode(ORB_SLAM3::System* pSLAM, const string &strSettin
         cv::initUndistortRectifyMap(K_r,D_r,R_r,P_r.rowRange(0,3).colRange(0,3),cv::Size(cols_r,rows_r),CV_32F,M1r,M2r);
     }
 
-    left_sub = std::make_shared<message_filters::Subscriber<ImageMsg> >(shared_ptr<rclcpp::Node>(this), "/stereo/left/image_raw");
-    right_sub = std::make_shared<message_filters::Subscriber<ImageMsg> >(shared_ptr<rclcpp::Node>(this), "/stereo/left/image_raw");
+    left_sub = std::make_shared<message_filters::Subscriber<ImageMsg> >(shared_ptr<rclcpp::Node>(this), "/stereo/left/rectified_images");
+    right_sub = std::make_shared<message_filters::Subscriber<ImageMsg> >(shared_ptr<rclcpp::Node>(this), "/stereo/right/rectified_images");
 
-    pub_rectified_left = this->create_publisher<sensor_msgs::msg::Image>("/stereo/left/rectified_images", 10);
-    pub_rectified_right = this->create_publisher<sensor_msgs::msg::Image>("/stereo/right/rectified_images", 10);
+    // pub_rectified_left = this->create_publisher<sensor_msgs::msg::Image>("/stereo/left/rectified_images", 10);
+    // pub_rectified_right = this->create_publisher<sensor_msgs::msg::Image>("/stereo/right/rectified_images", 10);
 
     syncApproximate = std::make_shared<message_filters::Synchronizer<approximate_sync_policy> >(approximate_sync_policy(10), *left_sub, *right_sub);
     syncApproximate->registerCallback(&StereoSlamNode::GrabStereo, this);
@@ -113,22 +114,22 @@ void StereoSlamNode::GrabStereo(const ImageMsg::SharedPtr msgLeft, const ImageMs
         cv::remap(cv_ptrRight->image,imRight,M1r,M2r,cv::INTER_LINEAR);
         m_SLAM->TrackStereo(imLeft, imRight, Utility::StampToSec(msgLeft->header.stamp));
 
-        //[HACK] Publish the rectified camera 
-        cv_bridge::CvImage cv_img_left_rectified, cv_img_right_rectified;
+        // //[HACK] Publish the rectified camera 
+        // cv_bridge::CvImage cv_img_left_rectified, cv_img_right_rectified;
 
-        // Left rectified
-        cv_img_left_rectified.header = msgLeft->header; // Use original message header for timestamp and frame_id
-        cv_img_left_rectified.encoding = msgLeft->encoding; // Keep original encoding (e.g., "bgr8", "mono8")
-        cv_img_left_rectified.image = imLeft;
+        // // Left rectified
+        // cv_img_left_rectified.header = msgLeft->header; // Use original message header for timestamp and frame_id
+        // cv_img_left_rectified.encoding = msgLeft->encoding; // Keep original encoding (e.g., "bgr8", "mono8")
+        // cv_img_left_rectified.image = imLeft;
 
-        // Right rectified
-        cv_img_right_rectified.header = msgRight->header; // Use original message header
-        cv_img_right_rectified.encoding = msgRight->encoding; // Keep original encoding
-        cv_img_right_rectified.image = imRight;
+        // // Right rectified
+        // cv_img_right_rectified.header = msgRight->header; // Use original message header
+        // cv_img_right_rectified.encoding = msgRight->encoding; // Keep original encoding
+        // cv_img_right_rectified.image = imRight;
 
-        // Publish the images
-        pub_rectified_left->publish(*cv_img_left_rectified.toImageMsg());
-        pub_rectified_right->publish(*cv_img_right_rectified.toImageMsg());
+        // // Publish the images
+        // pub_rectified_left->publish(*cv_img_left_rectified.toImageMsg());
+        // pub_rectified_right->publish(*cv_img_right_rectified.toImageMsg());
 
 
     }

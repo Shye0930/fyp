@@ -11,12 +11,17 @@
 ## Running ORB SLAM 3 via ros2
 Within the FYP folder run
 ```sh
-ros2 run orbslam3 stereo /home/shye/Desktop/projects/fyp/ORB_SLAM_3_COMMUNITY/Vocabulary/ORBvoc.txt /home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml true
 
-or 
+# To publish the frames of the 2 cameras
+ros2 launch stereo_camera_pipeline stereo_pipeline.launch.py 
 
-ros2 run orbslam3 stereo ORB_SLAM_3_COMMUNITY/Vocabulary/ORBvoc.txt config/stereo/Esp32s.yaml true
+# To boot up orb slam3
+ros2 run orbslam3 stereo /home/shye/Desktop/projects/fyp/ORB_SLAM_3_COMMUNITY/Vocabulary/ORBvoc.txt /home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml
 
+## To run my ros_ws stereo_pipeline camera
+rm -rf build log install
+colcon build --symlink-install --packages-select stereo_camera_pipeline
+ros2 launch stereo_camera_pipeline stereo_pipeline.launch.py
 ```
 
 ## Debug info used through the repo
