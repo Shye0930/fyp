@@ -1,0 +1,278 @@
+Script started on 2025-07-04 21:40:27-07:00 [TERM="xterm-256color" TTY="/dev/pts/2" COLUMNS="80" LINES="5"]
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ sudo shutdown -h now[Kcd scripts/
+]0;shye@ubuntu: ~/Desktop/projects/fyp/scripts[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp/scripts[00m$ cd scripts/[K[K[K[K[K[K[K[K[K[K[Kcd ..
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ scripts/build_everything.sh [K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kcd ..scripts/..[K[Kchmod +x scripts/p[Ktest.sh 
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ scripts/test.sh 
+lol
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ scripts/test.sh [9@chmod +x [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C [Kscripts/build_everything.sh 
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ [p[K[Kpython [K3 src/
+publish_stereo.py         stereo_processor_node.py  
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ python3 src/stereo_processor_node.py 
+[0m[INFO] [1751691358.206372636] [stereo_processor_node]: Attempting default calibration file from package share: ../config/stereo/Esp32s.yaml[0m
+[0m[INFO] [1751691358.206949397] [stereo_processor_node]: Using Left Camera URL: http://192.168.68.60[0m
+[0m[INFO] [1751691358.207259602] [stereo_processor_node]: Using Right Camera URL: http://192.168.68.62[0m
+[0m[INFO] [1751691358.207546448] [stereo_processor_node]: Attempting to load calibration from parameter: ../config/stereo/Esp32s.yaml[0m
+[0m[INFO] [1751691358.301578756] [stereo_processor_node]: Set left LED intensity to 10.[0m
+[0m[INFO] [1751691358.378298318] [stereo_processor_node]: Set right LED intensity to 10.[0m
+[0m[INFO] [1751691358.379754003] [stereo_processor_node]: Connecting to right camera at http://192.168.68.62:81/stream...[0m
+[0m[INFO] [1751691358.380875812] [stereo_processor_node]: Connecting to left camera at http://192.168.68.60:81/stream...[0m
+[0m[INFO] [1751691358.381369398] [stereo_processor_node]: [INFO] Loading calibration from: ../config/stereo/Esp32s.yaml[0m
+[31m[ERROR] [1751691358.381836848] [stereo_processor_node]: [ERROR] Calibration file not found at: ../config/stereo/Esp32s.yaml[0m
+[31m[ERROR] [1751691358.382147698] [stereo_processor_node]: Please ensure the provided 'calibration_file' parameter points to a valid absolute path.[0m
+Traceback (most recent call last):
+  File "src/stereo_processor_node.py", line 329, in <module>
+    main()
+  File "src/stereo_processor_node.py", line 319, in main
+    node = StereoProcessorNode()
+  File "src/stereo_processor_node.py", line 188, in __init__
+    self.timer = self.create_timer(0.01, self.process_and_publish_frames)
+  File "/opt/ros/foxy/lib/python3.8/site-packages/rclpy/node.py", line 1348, in create_timer
+    timer = Timer(callback, callback_group, timer_period_nsec, clock, context=self.context)
+  File "/opt/ros/foxy/lib/python3.8/site-packages/rclpy/timer.py", line 30, in __init__
+    self.__handle = Handle(_rclpy.rclpy_create_timer(
+_rclpy.RCLError: Failed to create timer: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at /tmp/binarydeb/ros-foxy-rcl-1.1.14/src/rcl/guard_condition.c:67
+^CException ignored in: <module 'threading' from '/usr/lib/python3.8/threading.py'>
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/threading.py", line 1388, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+FATAL: exception not rethrown
+FATAL: exception not rethrown
+^C^C^C^C^C^C^C^CAborted (core dumped)
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ python3 src/stereo_processor_node.py 
+[33m[WARN] [1751691441.216843829] [stereo_processor_node]: Could not find YAML file at: ../config/stereo/Esp32s.yaml[0m
+Traceback (most recent call last):
+  File "src/stereo_processor_node.py", line 322, in <module>
+    main()
+  File "src/stereo_processor_node.py", line 312, in main
+    node = StereoProcessorNode()
+  File "src/stereo_processor_node.py", line 147, in __init__
+    self.declare_parameter('calibration_file', default_calibration_file_path)
+NameError: name 'default_calibration_file_path' is not defined
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ python3 src/stereo_processor_node.py 
+[33m[WARN] [1751691467.786000863] [stereo_processor_node]: Could not find YAML file at: ../config/stereo/Esp32s.yaml[0m
+[0m[INFO] [1751691467.786765084] [stereo_processor_node]: Using Left Camera URL: http://192.168.68.60[0m
+[0m[INFO] [1751691467.787100051] [stereo_processor_node]: Using Right Camera URL: http://192.168.68.62[0m
+[0m[INFO] [1751691467.787404032] [stereo_processor_node]: Attempting to load calibration from parameter: ../config/stereo/Esp32s.yaml[0m
+[0m[INFO] [1751691467.890186688] [stereo_processor_node]: Set left LED intensity to 10.[0m
+[0m[INFO] [1751691467.968795540] [stereo_processor_node]: Set right LED intensity to 10.[0m
+[0m[INFO] [1751691467.970163765] [stereo_processor_node]: Connecting to left camera at http://192.168.68.60:81/stream...[0m
+[0m[INFO] [1751691467.970902315] [stereo_processor_node]: Connecting to right camera at http://192.168.68.62:81/stream...[0m
+[0m[INFO] [1751691467.971407749] [stereo_processor_node]: [INFO] Loading calibration from: ../config/stereo/Esp32s.yaml[0m
+[31m[ERROR] [1751691467.971780279] [stereo_processor_node]: [ERROR] Calibration file not found at: ../config/stereo/Esp32s.yaml[0m
+[31m[ERROR] [1751691467.972104789] [stereo_processor_node]: Please ensure the provided 'calibration_file' parameter points to a valid absolute path.[0m
+Traceback (most recent call last):
+  File "src/stereo_processor_node.py", line 323, in <module>
+    main()
+  File "src/stereo_processor_node.py", line 313, in main
+    node = StereoProcessorNode()
+  File "src/stereo_processor_node.py", line 182, in __init__
+    self.timer = self.create_timer(0.01, self.process_and_publish_frames)
+  File "/opt/ros/foxy/lib/python3.8/site-packages/rclpy/node.py", line 1348, in create_timer
+    timer = Timer(callback, callback_group, timer_period_nsec, clock, context=self.context)
+  File "/opt/ros/foxy/lib/python3.8/site-packages/rclpy/timer.py", line 30, in __init__
+    self.__handle = Handle(_rclpy.rclpy_create_timer(
+_rclpy.RCLError: Failed to create timer: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at /tmp/binarydeb/ros-foxy-rcl-1.1.14/src/rcl/guard_condition.c:67
+^CException ignored in: <module 'threading' from '/usr/lib/python3.8/threading.py'>
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/threading.py", line 1388, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+FATAL: exception not rethrown
+FATAL: exception not rethrown
+Aborted (core dumped)
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ python3 src/stereo_processor_node.py 
+[31m[ERROR] [1751691606.690045105] [stereo_processor_node]: Error reading YAML file: while scanning a directive
+  in "/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml", line 1, column 1
+expected alphabetic or numeric character, but found ':'
+  in "/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml", line 1, column 6[0m
+[0m[INFO] [1751691606.690748268] [stereo_processor_node]: Using Left Camera URL: http://192.168.68.60[0m
+[0m[INFO] [1751691606.691107437] [stereo_processor_node]: Using Right Camera URL: http://192.168.68.62[0m
+[0m[INFO] [1751691606.691440205] [stereo_processor_node]: Attempting to load calibration from parameter: /home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml[0m
+[0m[INFO] [1751691606.783063945] [stereo_processor_node]: Set left LED intensity to 10.[0m
+[0m[INFO] [1751691606.851295661] [stereo_processor_node]: Set right LED intensity to 10.[0m
+[0m[INFO] [1751691606.852742406] [stereo_processor_node]: Connecting to left camera at http://192.168.68.60:81/stream...[0m
+[0m[INFO] [1751691606.854218137] [stereo_processor_node]: [INFO] Loading calibration from: /home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml[0m
+[0m[INFO] [1751691606.855935902] [stereo_processor_node]: Connecting to right camera at http://192.168.68.62:81/stream...[0m
+[31m[ERROR] [1751691606.856054367] [stereo_processor_node]: [ERROR] Error parsing calibration YAML file '/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml': while scanning a directive
+  in "/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml", line 1, column 1
+expected alphabetic or numeric character, but found ':'
+  in "/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml", line 1, column 6[0m
+Traceback (most recent call last):
+  File "src/stereo_processor_node.py", line 326, in <module>
+    main()
+  File "src/stereo_processor_node.py", line 316, in main
+    node = StereoProcessorNode()
+  File "src/stereo_processor_node.py", line 185, in __init__
+    self.timer = self.create_timer(0.01, self.process_and_publish_frames)
+  File "/opt/ros/foxy/lib/python3.8/site-packages/rclpy/node.py", line 1348, in create_timer
+    timer = Timer(callback, callback_group, timer_period_nsec, clock, context=self.context)
+  File "/opt/ros/foxy/lib/python3.8/site-packages/rclpy/timer.py", line 30, in __init__
+    self.__handle = Handle(_rclpy.rclpy_create_timer(
+_rclpy.RCLError: Failed to create timer: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at /tmp/binarydeb/ros-foxy-rcl-1.1.14/src/rcl/guard_condition.c:67
+^CException ignored in: <module 'threading' from '/usr/lib/python3.8/threading.py'>
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/threading.py", line 1388, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+Segmentation fault (core dumped)
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ python3 src/stereo_processor_node.py 
+[31m[ERROR] [1751691719.678913664] [stereo_processor_node]: Error reading YAML file: while scanning a directive
+  in "/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml", line 1, column 1
+expected alphabetic or numeric character, but found ':'
+  in "/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml", line 1, column 6[0m
+[0m[INFO] [1751691719.679810203] [stereo_processor_node]: Using Left Camera URL: http://192.168.68.60[0m
+[0m[INFO] [1751691719.680289368] [stereo_processor_node]: Using Right Camera URL: http://192.168.68.62[0m
+[0m[INFO] [1751691719.680788990] [stereo_processor_node]: Attempting to load calibration from parameter: /home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml[0m
+[0m[INFO] [1751691719.769204218] [stereo_processor_node]: Set left LED intensity to 10.[0m
+[0m[INFO] [1751691719.846043488] [stereo_processor_node]: Set right LED intensity to 10.[0m
+[0m[INFO] [1751691719.848975476] [stereo_processor_node]: [INFO] Loading calibration from: /home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml[0m
+[0m[INFO] [1751691719.849173620] [stereo_processor_node]: Connecting to right camera at http://192.168.68.62:81/stream...[0m
+[0m[INFO] [1751691719.849851371] [stereo_processor_node]: Connecting to left camera at http://192.168.68.60:81/stream...[0m
+[31m[ERROR] [1751691719.850150942] [stereo_processor_node]: [ERROR] Error parsing calibration YAML file '/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml': while scanning a directive
+  in "/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml", line 1, column 1
+expected alphabetic or numeric character, but found ':'
+  in "/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml", line 1, column 6[0m
+Traceback (most recent call last):
+  File "src/stereo_processor_node.py", line 326, in <module>
+    main()
+  File "src/stereo_processor_node.py", line 316, in main
+    node = StereoProcessorNode()
+  File "src/stereo_processor_node.py", line 185, in __init__
+    self.timer = self.create_timer(0.01, self.process_and_publish_frames)
+  File "/opt/ros/foxy/lib/python3.8/site-packages/rclpy/node.py", line 1348, in create_timer
+    timer = Timer(callback, callback_group, timer_period_nsec, clock, context=self.context)
+  File "/opt/ros/foxy/lib/python3.8/site-packages/rclpy/timer.py", line 30, in __init__
+    self.__handle = Handle(_rclpy.rclpy_create_timer(
+_rclpy.RCLError: Failed to create timer: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at /tmp/binarydeb/ros-foxy-rcl-1.1.14/src/rcl/guard_condition.c:67
+^CException ignored in: <module 'threading' from '/usr/lib/python3.8/threading.py'>
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/threading.py", line 1388, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+FATAL: exception not rethrown
+Aborted (core dumped)
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ python3 src/stereo_processor_node.py [16@chmod +x scripts/test.sh scripts/build_everything.sh[C
+chmod: cannot access 'scripts/test.sh': No such file or directory
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ chmod +x scripts/test.sh scripts/build_everything.sh [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[16Ppython3 src/stereo_processor_node.py[C
+[31m[ERROR] [1751691805.863121275] [stereo_processor_node]: Error reading YAML file: while scanning a simple key
+  in "/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml", line 95, column 3
+could not find expected ':'
+  in "/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml", line 96, column 1[0m
+[0m[INFO] [1751691805.864254670] [stereo_processor_node]: Using Left Camera URL: http://192.168.68.60[0m
+[0m[INFO] [1751691805.864583546] [stereo_processor_node]: Using Right Camera URL: http://192.168.68.62[0m
+[0m[INFO] [1751691805.864885003] [stereo_processor_node]: Attempting to load calibration from parameter: /home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml[0m
+[0m[INFO] [1751691805.958071018] [stereo_processor_node]: Set left LED intensity to 10.[0m
+[0m[INFO] [1751691806.030254470] [stereo_processor_node]: Set right LED intensity to 10.[0m
+[0m[INFO] [1751691806.032410696] [stereo_processor_node]: Connecting to right camera at http://192.168.68.62:81/stream...[0m
+[0m[INFO] [1751691806.032812106] [stereo_processor_node]: [INFO] Loading calibration from: /home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml[0m
+[0m[INFO] [1751691806.038764641] [stereo_processor_node]: Connecting to left camera at http://192.168.68.60:81/stream...[0m
+[31m[ERROR] [1751691806.039151469] [stereo_processor_node]: [ERROR] Error parsing calibration YAML file '/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml': while scanning a simple key
+  in "/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml", line 95, column 3
+could not find expected ':'
+  in "/home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml", line 96, column 1[0m
+Traceback (most recent call last):
+  File "src/stereo_processor_node.py", line 326, in <module>
+    main()
+  File "src/stereo_processor_node.py", line 316, in main
+    node = StereoProcessorNode()
+  File "src/stereo_processor_node.py", line 185, in __init__
+    self.timer = self.create_timer(0.01, self.process_and_publish_frames)
+  File "/opt/ros/foxy/lib/python3.8/site-packages/rclpy/node.py", line 1348, in create_timer
+    timer = Timer(callback, callback_group, timer_period_nsec, clock, context=self.context)
+  File "/opt/ros/foxy/lib/python3.8/site-packages/rclpy/timer.py", line 30, in __init__
+    self.__handle = Handle(_rclpy.rclpy_create_timer(
+_rclpy.RCLError: Failed to create timer: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at /tmp/binarydeb/ros-foxy-rcl-1.1.14/src/rcl/guard_condition.c:67
+^CException ignored in: <module 'threading' from '/usr/lib/python3.8/threading.py'>
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/threading.py", line 1388, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+Segmentation fault (core dumped)
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ python3 src/stereo_processor_node.py 
+[0m[INFO] [1751691847.347277049] [stereo_processor_node]: Loaded YAML file from: /home/shye/Desktop/projects/fyp/config/stereo/stereo_calibration.yaml[0m
+[0m[INFO] [1751691847.347827863] [stereo_processor_node]: Using Left Camera URL: http://192.168.68.60[0m
+[0m[INFO] [1751691847.348119445] [stereo_processor_node]: Using Right Camera URL: http://192.168.68.62[0m
+[0m[INFO] [1751691847.348394236] [stereo_processor_node]: Attempting to load calibration from parameter: /home/shye/Desktop/projects/fyp/config/stereo/stereo_calibration.yaml[0m
+[0m[INFO] [1751691847.443402955] [stereo_processor_node]: Set left LED intensity to 10.[0m
+[0m[INFO] [1751691847.506974066] [stereo_processor_node]: Set right LED intensity to 10.[0m
+[0m[INFO] [1751691847.508837829] [stereo_processor_node]: [INFO] Loading calibration from: /home/shye/Desktop/projects/fyp/config/stereo/stereo_calibration.yaml[0m
+[0m[INFO] [1751691847.510022723] [stereo_processor_node]: Connecting to right camera at http://192.168.68.62:81/stream...[0m
+[0m[INFO] [1751691847.515864903] [stereo_processor_node]: Connecting to left camera at http://192.168.68.60:81/stream...[0m
+[0m[INFO] [1751691847.517942222] [stereo_processor_node]: [INFO] Calibration parameters loaded and rectification maps initialized.[0m
+[0m[INFO] [1751691847.518569590] [stereo_processor_node]: Stereo Processor Node started and ready to process images.[0m
+[33m[WARN] [1751691847.528752348] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.538798891] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.548756537] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.558731494] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.569012260] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.578707715] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.588684919] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.598716192] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.608872887] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.618670907] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.628790060] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.639054237] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.648663395] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.659242145] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.669009561] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.678677346] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.688702339] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.698835402] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.708834528] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.718796577] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.728767752] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.738726163] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.748702614] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.758971747] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.768668727] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.778686215] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.788782781] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.798907777] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.808663520] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.818810785] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.828733575] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.838648439] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.848827896] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.859029219] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.868746686] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.879224514] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.889046957] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.898731221] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.908892627] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.919250089] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.928859349] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.938698816] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.948769960] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.958844762] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.968677839] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.978770765] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.988780308] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691847.998817625] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691848.008814278] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691848.018672584] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691848.028677580] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691848.038786044] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691848.048676337] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691848.058939024] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691848.069729593] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691848.078916858] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691848.088976349] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+[33m[WARN] [1751691848.098959898] [stereo_processor_node]: Failed to read one or both frames from camera threads. Waiting for data...[0m
+^C[0m[INFO] [1751691862.851508760] [stereo_processor_node]: Stopping camera stream threads...[0m
+[0m[INFO] [1751691862.923647590] [stereo_processor_node]: Set left LED intensity to 0.[0m
+[0m[INFO] [1751691862.968854351] [stereo_processor_node]: left camera thread stopped.[0m
+[0m[INFO] [1751691863.003611158] [stereo_processor_node]: Set right LED intensity to 0.[0m
+[0m[INFO] [1751691863.021679267] [stereo_processor_node]: right camera thread stopped.[0m
+[0m[INFO] [1751691863.022310251] [stereo_processor_node]: Camera stream threads stopped.[0m
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ tree
+
+Command 'tree' not found, but can be installed with:
+
+sudo snap install tree  # version 2.1.3+pkg-5852, or
+sudo apt  install tree  # version 1.8.0-1
+
+See 'snap info tree' for additional versions.
+
+]0;shye@ubuntu: ~/Desktop/projects/fyp[01;32mshye@ubuntu[00m:[01;34m~/Desktop/projects/fyp[00m$ treepython3 src/stereo_processor_node.py [16@chmod +x scripts/test.sh scripts/build_everything.sh[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[16Ppython3 src/stereo_processor_node.py[C[16@chmod +x scripts/test.sh scripts/build_everything.sh[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cscripts/test.sh [K[9@chmod +x [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cd ..[Kscripts/sudo shutdown -h now[12Pgit pushsudo shutdown -h now[9Pcd scripts/..[K[K[K[K[K[Kvf[K[Kcd ros_ws/ste[K[K[Ksrc/stereo_camera_pipeline/stereo_camera_pipeline/[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Klaunch/
+]0;shye@ubuntu: ~/Desktop/projects/fyp/ros_ws/src/stereo_camera_pipeline/launch[01;32m

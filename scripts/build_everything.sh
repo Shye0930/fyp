@@ -41,9 +41,19 @@ cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j$(nproc)
 
+echo " "
 echo "Converting vocabulary to binary"
 rm -f bin_vocabulary
 cd ..
 ./tools/bin_vocabulary
 
-#TODO: Include building of ros2 wrapper too.
+echo " "
+echo "Building ROS2 wrapper for orb slam3"
+cd ../ros_ws
+rm -rf build log install
+colcon build --symlink-install --packages-select orbslam3
+
+
+echo " "
+echo "Building ROS2 stereo camera pipeline"
+colcon build --symlink-install --packages-select stereo_camera_pipeline

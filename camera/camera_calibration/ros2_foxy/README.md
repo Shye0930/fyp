@@ -63,6 +63,14 @@ sudo cp -r /home/<your name>/Desktop/fyp/camera/camera_calibration/ros2_foxy/ass
 //#define CAMERA_MODEL_DFRobot_Romeo_ESP32S3 // Has PSRAM
 #include "camera_pins.h"
 
+// Manual Exposure/Gain/Brightness values - TUNE THESE CAREFULLY!
+#define MANUAL_AEC_VALUE 600 // Range 0-1200. Experiment with this heavily!
+#define MANUAL_AGC_GAIN 1   // Range 0-30. 0 is lowest gain (least noisy). Experiment.
+#define BRIGHTNESS_VALUE 0  // Range -2 to 2. 0 is normal.
+#define CONTRAST_VALUE 0    // Range -2 to 2. 0 is normal.
+#define SATURATION_VALUE 0  // Range -2 to 2. 0 is normal (will be irrelevant for grayscale, but good to set).
+
+
 // ===========================
 // Enter your WiFi credentials
 // ===========================
@@ -135,8 +143,8 @@ void setup() {
 
 
   current_cam_framesize = FRAMESIZE_HVGA;
-  current_cam_quality = 15; //10-63 lower number means higher quality
-  current_cam_gain = (gainceiling_t)0;
+  current_cam_quality = 10; //10-63 lower number means higher quality
+  current_cam_gain = (gainceiling_t)1;
 
   config.frame_size = current_cam_framesize;
   config.jpeg_quality = current_cam_quality; 
@@ -156,10 +164,10 @@ void setup() {
     }
   } 
 
-#if defined(CAMERA_MODEL_ESP_EYE)
+  #if defined(CAMERA_MODEL_ESP_EYE)
   pinMode(13, INPUT_PULLUP);
   pinMode(14, INPUT_PULLUP);
-#endif
+  #endif
 
   // camera init
   esp_err_t err = esp_camera_init(&config);
@@ -168,24 +176,52 @@ void setup() {
     return;
   }
 
-  
+
   sensor_t *s = esp_camera_sensor_get();
   // initial sensors are flipped vertically and colors are a bit saturated
 
   if(s->id.PID == OV2640_PID){
     s->set_vflip(s, 1);        // flip it back
-    s->set_brightness(s, -2);   // up the brightness just a bit
-    s->set_contrast(s, 0);
-    s->set_saturation(s,2);
     s->set_hmirror(s,1);
-    s->set_gainceiling(s, current_cam_gain);
-    s->set_whitebal(s, 0);      // Disable Auto White Balance (AWB)
-    s->set_awb_gain(s, 0);      // Disable AWB gain control
-    // s->set_saturation(s, 0);    // Set saturation to neutral (0 is default, -2 to 2 range)
-    //                             // If you want to keep the current saturation (2) but disable AWB,
-    //                             // leave this line as s->set_saturation(s,2);
-  }
+    // s->set_brightness(s, -2);   // up the brightness just a bit
+    // s->set_contrast(s, 0);
+    // s->set_saturation(s,2);
+    // s->set_gainceiling(s, current_cam_gain);
+    // s->set_whitebal(s, 0);      // Disable Auto White Balance (AWB)
+    // s->set_awb_gain(s, 0);      // Disable AWB gain control
+    // s->set_gain_ctrl(s, 0); 
+    // s->set_exposure_ctrl(s, 0); 
+    // s->set_agc_gain(s, 1); 
+    // s->set_aec_value(s, 600); 
+    // 1. Automatic Exposure Control (AEC)
+    s->set_exposure_ctrl(s, 0); // 0 = disable, 1 = enable
+    s->set_aec2(s, 0);          // AEC Version 2. Disable this too.
+    s->set_ae_level(s, 0);      // Exposure level offset. Set to 0 (normal).
+    s->set_aec_value(s, MANUAL_AEC_VALUE); // Set manual exposure value when AEC is off.
 
+    // 2. Automatic Gain Control (AGC)
+    s->set_gain_ctrl(s, 0);     // 0 = disable, 1 = enable
+    s->set_agc_gain(s, MANUAL_AGC_GAIN); // Set manual gain value when AGC is off.
+    s->set_gainceiling(s, current_cam_gain); // Set a low gain ceiling even if AGC is off, to prevent excessive noise if somehow enabled.
+
+    // 3. Automatic White Balance (AWB)
+    s->set_whitebal(s, 0);      // 0 = disable, 1 = enable
+    s->set_awb_gain(s, 0);      // AWB gain control. Disable this too.
+    s->set_wb_mode(s, 0);       // White balance mode (0-4). 0 is Auto, but since set_whitebal is 0, this is less impactful.
+
+    // 4. Other image enhancements/auto adjustments
+    s->set_brightness(s, BRIGHTNESS_VALUE); // -2 to 2
+    s->set_contrast(s, CONTRAST_VALUE);     // -2 to 2
+    s->set_saturation(s, SATURATION_VALUE); // -2 to 2 (Irrelevant for grayscale, but good for completeness)
+    s->set_sharpness(s, 0);     // -2 to 2. Set to 0 to avoid artificial sharpening that can affect features.
+    s->set_denoise(s, 0);       // Disable noise reduction.
+    s->set_bpc(s, 0);           // Black Pixel Correction. Disable.
+    s->set_wpc(s, 0);           // White Pixel Correction. Disable.
+    s->set_dcw(s, 0);           // Digital Crop Window. Disable for predictable output.
+    s->set_colorbar(s, 0);      // Colorbar. Disable (for testing patterns).
+    s->set_special_effect(s, 2); // grayscale
+
+  }
 
 #if defined(CAMERA_MODEL_M5STACK_WIDE) || defined(CAMERA_MODEL_M5STACK_ESP32CAM)
   s->set_vflip(s, 1);

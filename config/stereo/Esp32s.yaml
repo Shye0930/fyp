@@ -55,7 +55,7 @@ Camera.bf: 37.95739969
 Stereo.b: 0.07875 
 
 # Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
-Camera.RGB: 1
+# Camera.RGB: 1
 
 # Close/Far threshold. Baseline times.
 Stereo.ThDepth:  9.156975 #35.0 #60.0
