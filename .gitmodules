@@ -1,3 +1,9 @@
 [submodule "ORB_SLAM_3_COMMUNITY"]
 	path = ORB_SLAM_3_COMMUNITY
 	url = https://github.com/Shye0930/ORB_SLAM_3_COMMUNITY
+[submodule "ros_ws/src/ros_ws/src/stereo_camera_pipeline"]
+	path = ros_ws/src/ros_ws/src/stereo_camera_pipeline
+	url = https://github.com/Shye0930/stereo_camera_pipeline.git
+[submodule "ros_ws/src/stereo_camera_pipeline"]
+	path = ros_ws/src/stereo_camera_pipeline
+	url = https://github.com/Shye0930/stereo_camera_pipeline.git
