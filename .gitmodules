@@ -7,3 +7,6 @@
 [submodule "ros_ws/src/stereo_camera_pipeline"]
 	path = ros_ws/src/stereo_camera_pipeline
 	url = https://github.com/Shye0930/stereo_camera_pipeline.git
+[submodule "assets/installation_guide"]
+	path = assets/installation_guide
+	url = https://github.com/NAIRBS/ORBSLAM3-Ubuntu-20.04.git
