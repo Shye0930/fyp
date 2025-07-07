@@ -18,7 +18,14 @@ cd ../ros_ws
 rm -rf build log install
 colcon build --symlink-install --packages-select orbslam3 --cmake-clean-cache
 
-
 echo " "
 echo "Building ROS2 stereo camera pipeline"
 colcon build --symlink-install --packages-select stereo_camera_pipeline
+
+echo " "
+echo "Building ROS2 Envision custom interfaces"
+colcon build --symlink-install --packages-select envision_interfaces
+
+echo " "
+echo "Building ROS2 Stereo_obstacle_detector"
+colcon build --symlink-install --packages-select stereo_obstacle_detector

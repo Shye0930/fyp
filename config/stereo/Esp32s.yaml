@@ -60,6 +60,8 @@ Stereo.b: 0.078453409
 # Close/Far threshold. Baseline times.
 Stereo.ThDepth:  9.156975 #35.0 #60.0
 
+Camera.RGB : 1
+
 
 #--------------------------------------------------------------------------------------------
 # Stereo Rectification. Only if you need to pre-rectify the images.

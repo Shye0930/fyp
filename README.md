@@ -1,4 +1,5 @@
-# fyp
+# Envision
+
 
 | Proj # 	| CCDS24-0982 	|
 |---	|---	|
@@ -69,7 +70,7 @@ Conversely, `config/stereo/Esp32s.yaml` provides an example of the specific conf
 
 Addtionally, if you use the ros2 stereo_camera_pipeline package, do modify the YAML under the config directory as that is the config the node will fallback to if the path provided is invalid
 
-### 🔧 Publishing Rectified Stereo Frames
+### Publishing Rectified Stereo Frames
 
 To publish rectified stereo frames, you can choose one of the following methods:
 
@@ -86,6 +87,10 @@ ros2 launch stereo_camera_pipeline stereo_pipeline.launch.py
 ```
 
 ## Running ORB SLAM 3 via ros2
+
+#### **Prequsites**
+- Need to have the ros2 topic `/stereo/left/rectified_images` and `/stereo/right/rectified_images` published using `stereo_camera_pipeline` package
+
 Within the FYP folder run
 ```sh
 # To publish the frames of the 2 cameras
@@ -93,6 +98,20 @@ ros2 launch stereo_camera_pipeline stereo_pipeline.launch.py
 
 # To boot up orb slam3
 ros2 run orbslam3 stereo /home/shye/Desktop/projects/fyp/ORB_SLAM_3_COMMUNITY/Vocabulary/ORBvoc.txt /home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml
+```
+
+## Running Stereo Obstacle detector
+
+#### **Prequsites**
+- Need to have the ros2 topic `/stereo/left/rectified_images` and `/stereo/right/rectified_images` published using `stereo_camera_pipeline` package
+
+#### **Note**
+- Edit focal length, baseline of camera parameter within the launch file in the `ros_ws/src/stereo_obstacle_detector/launch` folder 
+- Edit the SBGM parameter if needed
+
+Run with:
+```sh
+ros2 launch stereo_obstacle_detector stereo_detector.launch.py
 ```
 
 ## Debug info used through the repo

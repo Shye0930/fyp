@@ -1,1 +1,0 @@
-/home/shye/Desktop/projects/fyp/build/stereo_camera_pipeline/launch/stereo_pipeline.launch.py
