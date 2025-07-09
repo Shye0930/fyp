@@ -66,5 +66,9 @@ echo " "
 echo "Building ROS2 Stereo_obstacle_detector"
 colcon build --symlink-install --packages-select stereo_obstacle_detector
 
+echo " "
+echo "Building ROS2 Image_masker"
+colcon build --symlink-install --packages-select image_masker
+
 
 

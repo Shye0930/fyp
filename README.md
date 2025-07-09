@@ -118,6 +118,22 @@ Run with:
 ros2 launch stereo_obstacle_detector stereo_detector.launch.py
 ```
 
+## Image Masker
+
+#### **Prequsites**
+- Need to have the ROS2 topics `/stereo/left/rectified_images` and `/stereo/right/rectified_images` published (e.g., by a stereo camera driver like `stereo_camera_pipeline`).
+
+#### **Note**
+- Ensure your chosen YOLO segmentation model (e.g., `yolov8n-seg.pt`) is placed in the `ros_ws/src/image_masker/model/` directory. 
+- **[WARN]** You need a YOLO model that supports segmentation for it to work!
+- Edit the `yolo_model_path`, `person_class_id`, or `publish_masked_images` parameters within the launch file located in the `ros_ws/src/image_masker/launch/` folder if needed.
+- The masked images will be published to `/stereo/left/rect/masked` and `/stereo/right/rect/masked`.
+
+Run with:
+```sh
+ros2 launch image_masker image_masker.launch.py
+```
+
 ## Debug info used through the repo
 
 [INFO]: For informational messages, especially when the code is doing something expected but noteworthy (e.g., successful initialization, a specific mode being activated).
