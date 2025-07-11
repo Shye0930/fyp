@@ -25,6 +25,9 @@ find_package(Pangolin REQUIRED)
 find_package(ORB_SLAM3 REQUIRED)
 find_package(rclpy REQUIRED)
 
+find_package(builtin_interfaces REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+
 include_directories(
   include
   ${ORB_SLAM3_ROOT_DIR}/include
@@ -34,6 +37,7 @@ include_directories(
 link_directories(
   include
 )
+
 
 add_executable(mono
   src/monocular/mono.cpp

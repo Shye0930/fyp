@@ -9,7 +9,7 @@
 
 
 ## Pre-requisites installation guide
-The comprehensive guide for installing all necessary pre-requisites is available [here](https://github.com/NAIRBS/ORBSLAM3-Ubuntu-20.04)
+1. The comprehensive guide for installing all necessary pre-requisites is available [here](https://github.com/NAIRBS/ORBSLAM3-Ubuntu-20.04)
 
 
 ## Setting up swap

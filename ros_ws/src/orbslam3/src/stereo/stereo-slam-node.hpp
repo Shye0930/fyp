@@ -1,19 +1,19 @@
 #ifndef __STEREO_SLAM_NODE_HPP__
 #define __STEREO_SLAM_NODE_HPP__
 
-#include "rclcpp/rclcpp.hpp"
-#include "sensor_msgs/msg/image.hpp"
+// #include "rclcpp/rclcpp.hpp"
+// #include "sensor_msgs/msg/image.hpp"
 
-#include "message_filters/subscriber.h"
-#include "message_filters/synchronizer.h"
-#include "message_filters/sync_policies/approximate_time.h"
+// #include "message_filters/subscriber.h"
+// #include "message_filters/synchronizer.h"
+// #include "message_filters/sync_policies/approximate_time.h"
 
-#include <cv_bridge/cv_bridge.h>
+// #include <cv_bridge/cv_bridge.h>
 
-#include "System.h"
-#include "Frame.h"
-#include "Map.h"
-#include "Tracking.h"
+// #include "System.h"
+// #include "Frame.h"
+// #include "Map.h"
+// #include "Tracking.h"
 
 #include "utility.hpp"
 
@@ -43,5 +43,7 @@ private:
 
     std::shared_ptr<message_filters::Synchronizer<approximate_sync_policy> > syncApproximate;
 };
+
+
 
 #endif
