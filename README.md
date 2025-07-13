@@ -102,6 +102,9 @@ ros2 launch stereo_camera_pipeline stereo_pipeline.launch.py
 
 # To boot up orb slam3
 ros2 run orbslam3 stereo /home/shye/Desktop/projects/fyp/ORB_SLAM_3_COMMUNITY/Vocabulary/ORBvoc.txt /home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml
+
+# To launch Rviz
+ros2 run rviz2 rviz2 -d config/stereo/orb_slam3_no_imu.rviz
 ```
 
 ## Running Stereo Obstacle detector

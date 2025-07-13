@@ -84,7 +84,7 @@ extern image_transport::Publisher tracking_img_pub;
 void setup_services(std::shared_ptr<rclcpp::Node> node, const std::string &node_name);
 void setup_publishers(std::shared_ptr<rclcpp::Node> node, image_transport::ImageTransport &image_transport,const std::string &node_name);
 
-void publish_topics(const rclcpp::Time &msg_time, const Eigen::Vector3f &Wbb);
+void publish_topics(const rclcpp::Time &msg_time, const Eigen::Vector3f &Wbb = Eigen::Vector3f::Zero());
 
 void publish_camera_pose(const Sophus::SE3f &Tcw_SE3f, const rclcpp::Time &msg_time);
 void publish_tracking_img(cv::Mat image, rclcpp::Time msg_time);

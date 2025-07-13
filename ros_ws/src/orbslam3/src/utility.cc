@@ -50,17 +50,20 @@ bool save_traj_srv(const std::shared_ptr<envision_interfaces::srv::SaveMap::Requ
 
 void setup_services(std::shared_ptr<rclcpp::Node> node, const std::string &node_name)
 {
+    RCLCPP_INFO(node->get_logger(), "[INFO] Setting up services for the node %s", node_name.c_str());
     // [INFO] Service are created and automatically advertises over the network
-    rclcpp::Service<envision_interfaces::srv::SaveMap>::SharedPtr save_map_service = node->create_service<envision_interfaces::srv::SaveMap>(
+    static rclcpp::Service<envision_interfaces::srv::SaveMap>::SharedPtr save_map_service = node->create_service<envision_interfaces::srv::SaveMap>(
         node_name + "/save_map", &save_map_srv);
 
-    rclcpp::Service<envision_interfaces::srv::SaveMap>::SharedPtr save_traj_service = node->create_service<envision_interfaces::srv::SaveMap>(
+    static rclcpp::Service<envision_interfaces::srv::SaveMap>::SharedPtr save_traj_service = node->create_service<envision_interfaces::srv::SaveMap>(
         node_name + "/save_traj", &save_traj_srv);
 }
 
 
 void setup_publishers(std::shared_ptr<rclcpp::Node> node, image_transport::ImageTransport &image_transport,
     const std::string &node_name){
+
+    RCLCPP_INFO(node->get_logger(), "[INFO] Setting up publisher for the node %s", node_name.c_str());
 
     pose_pub = node->create_publisher<geometry_msgs::msg::PoseStamped>(
         node_name + "/camera_pose", 1);
@@ -157,7 +160,8 @@ void publish_body_odom(const Sophus::SE3f &Twb_SE3f,
     odom_msg.twist.twist.angular.y = ang_vel_body.y();
     odom_msg.twist.twist.angular.z = ang_vel_body.z();
 
-    odom_pub->publish(odom_msg);  // ROS 2 publishers use `->publish(...)`
+    if(odom_pub)
+        odom_pub->publish(odom_msg);  // ROS 2 publishers use `->publish(...)`
 }
 
 void publish_camera_pose(const Sophus::SE3f &Tcw_SE3f, const rclcpp::Time &msg_time)
@@ -179,7 +183,8 @@ void publish_camera_pose(const Sophus::SE3f &Tcw_SE3f, const rclcpp::Time &msg_t
     pose_msg.pose.orientation.z = q.z();
     pose_msg.pose.orientation.w = q.w();
 
-    pose_pub->publish(pose_msg);  // ROS 2: use `->publish`
+    if(pose_pub)
+        pose_pub->publish(pose_msg);  // ROS 2: use `->publish`
 }
 
 void publish_tf_transform(Sophus::SE3f T_SE3f, std::string frame_id, std::string child_frame_id, rclcpp::Time msg_time)
@@ -209,6 +214,7 @@ void publish_tracking_img(cv::Mat image, rclcpp::Time msg_time)
 
     auto rendered_image_msg = cv_bridge::CvImage(header, "bgr8", image).toImageMsg();
 
+    
     tracking_img_pub.publish(*rendered_image_msg);
 }
 
@@ -240,21 +246,24 @@ void publish_keypoints(std::vector<ORB_SLAM3::MapPoint*> tracked_map_points, std
 
     sensor_msgs::msg::PointCloud2 cloud = keypoints_to_pointcloud(finalKeypoints, msg_time);
 
-    tracked_keypoints_pub->publish(cloud);
+    if(tracked_keypoints_pub)
+        tracked_keypoints_pub->publish(cloud);
 }
 
 void publish_tracked_points(std::vector<ORB_SLAM3::MapPoint*> tracked_points, rclcpp::Time msg_time)
 {
     sensor_msgs::msg::PointCloud2 cloud = mappoint_to_pointcloud(tracked_points, msg_time);
     
-    tracked_mappoints_pub->publish(cloud);
+    if(tracked_mappoints_pub)
+        tracked_mappoints_pub->publish(cloud);
 }
 
 void publish_all_points(std::vector<ORB_SLAM3::MapPoint*> map_points, rclcpp::Time msg_time)
 {
     sensor_msgs::msg::PointCloud2 cloud = mappoint_to_pointcloud(map_points, msg_time);
     
-    all_mappoints_pub->publish(cloud);
+    if(all_mappoints_pub)
+        all_mappoints_pub->publish(cloud);
 }
 
 // More details: http://docs.ros.org/en/api/visualization_msgs/html/msg/Marker.html
@@ -289,7 +298,8 @@ void publish_kf_markers(std::vector<Sophus::SE3f> vKFposes, rclcpp::Time msg_tim
         kf_markers.points.push_back(kf_marker);
     }
     
-    kf_markers_pub->publish(kf_markers);
+    if(kf_markers_pub)
+        kf_markers_pub->publish(kf_markers);
 }
 
 sensor_msgs::msg::PointCloud2 keypoints_to_pointcloud(const std::vector<cv::KeyPoint>& keypoints, rclcpp::Time msg_time)
