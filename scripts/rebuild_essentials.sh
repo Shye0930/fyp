@@ -12,11 +12,11 @@ cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j$(nproc)
 
 
-# echo " "
-# echo "Configuring and building ROS2 Wrapper for ORB_SLAM3 ..."
-# cd ../ros_ws
-# rm -rf build log install
-# colcon build --symlink-install --packages-select orbslam3 --cmake-clean-cache
+echo " "
+echo "Configuring and building ROS2 Wrapper for ORB_SLAM3 ..."
+cd ../ros_ws
+rm -rf build log install
+colcon build --symlink-install --packages-select orbslam3 --cmake-clean-cache
 
 # echo " "
 # echo "Building ROS2 stereo camera pipeline"

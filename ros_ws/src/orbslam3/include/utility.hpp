@@ -56,6 +56,8 @@
 #include "Map.h"
 #include "Tracking.h"
 
+#include <functional> // Required for std::bind
+
 class Utility
 {
 public:
@@ -67,7 +69,7 @@ public:
 };
 
 // // ORB-SLAM3 global variables
-extern ORB_SLAM3::System* pSLAM;
+//extern ORB_SLAM3::System* pSLAM;
 extern ORB_SLAM3::System::eSensor sensor_type;
 
 extern std::string world_frame_id, cam_frame_id, imu_frame_id;
@@ -81,24 +83,24 @@ extern image_transport::Publisher tracking_img_pub;
 
 
 // // Function declarations (updated for ROS 2)
-void setup_services(std::shared_ptr<rclcpp::Node> node, const std::string &node_name);
+void setup_services(std::shared_ptr<rclcpp::Node> node, const std::string &node_name, ORB_SLAM3::System* pSLAM_instance);
 void setup_publishers(std::shared_ptr<rclcpp::Node> node, image_transport::ImageTransport &image_transport,const std::string &node_name);
 
-void publish_topics(const rclcpp::Time &msg_time, const Eigen::Vector3f &Wbb = Eigen::Vector3f::Zero());
+void publish_topics(ORB_SLAM3::System* pSLAM_instance, const rclcpp::Time &msg_time, const Eigen::Vector3f &Wbb = Eigen::Vector3f::Zero());
 
-void publish_camera_pose(const Sophus::SE3f &Tcw_SE3f, const rclcpp::Time &msg_time);
-void publish_tracking_img(cv::Mat image, rclcpp::Time msg_time);
-void publish_tracked_points(std::vector<ORB_SLAM3::MapPoint*> tracked_points, rclcpp::Time msg_time);
-void publish_keypoints(std::vector<ORB_SLAM3::MapPoint*> tracked_map_points, std::vector<cv::KeyPoint> tracked_keypoints, rclcpp::Time msg_time);
+void publish_camera_pose(ORB_SLAM3::System* pSLAM_instance, const Sophus::SE3f &Tcw_SE3f, const rclcpp::Time &msg_time);
+void publish_tracking_img(ORB_SLAM3::System* pSLAM_instance, cv::Mat image, rclcpp::Time msg_time);
+void publish_tracked_points(ORB_SLAM3::System* pSLAM_instance, std::vector<ORB_SLAM3::MapPoint*> tracked_points, rclcpp::Time msg_time);
+void publish_keypoints(ORB_SLAM3::System* pSLAM_instance, std::vector<ORB_SLAM3::MapPoint*> tracked_map_points, std::vector<cv::KeyPoint> tracked_keypoints, rclcpp::Time msg_time);
 
-void publish_all_points(std::vector<ORB_SLAM3::MapPoint*> map_points, rclcpp::Time msg_time);
-void publish_tf_transform(Sophus::SE3f T_SE3f, std::string frame_id, std::string child_frame_id, rclcpp::Time msg_time);
-void publish_body_odom(const Sophus::SE3f &Twb_SE3f,const Eigen::Vector3f &Vwb_E3f,const Eigen::Vector3f &ang_vel_body,const rclcpp::Time &msg_time);
-void publish_kf_markers(std::vector<Sophus::SE3f> vKFposes, rclcpp::Time msg_time);
+void publish_all_points(ORB_SLAM3::System* pSLAM_instance, std::vector<ORB_SLAM3::MapPoint*> map_points, rclcpp::Time msg_time);
+void publish_tf_transform(ORB_SLAM3::System* pSLAM_instance, Sophus::SE3f T_SE3f, std::string frame_id, std::string child_frame_id, rclcpp::Time msg_time);
+void publish_body_odom(ORB_SLAM3::System* pSLAM_instance, const Sophus::SE3f &Twb_SE3f,const Eigen::Vector3f &Vwb_E3f,const Eigen::Vector3f &ang_vel_body,const rclcpp::Time &msg_time);
+void publish_kf_markers(ORB_SLAM3::System* pSLAM_instance, std::vector<Sophus::SE3f> vKFposes, rclcpp::Time msg_time);
 
-bool save_map_srv(const std::shared_ptr<envision_interfaces::srv::SaveMap::Request> req, 
+void save_map_srv(ORB_SLAM3::System* pSLAM_instance,const std::shared_ptr<envision_interfaces::srv::SaveMap::Request> req,
     std::shared_ptr<envision_interfaces::srv::SaveMap::Response> res);
-bool save_traj_srv(const std::shared_ptr<envision_interfaces::srv::SaveMap::Request> req, 
+void save_traj_srv(ORB_SLAM3::System* pSLAM_instance, const std::shared_ptr<envision_interfaces::srv::SaveMap::Request> req,
     std::shared_ptr<envision_interfaces::srv::SaveMap::Response> res);
 
 

@@ -24,6 +24,8 @@ public:
 
     ~StereoSlamNode();
 
+    void initialize();
+
 private:
     using ImageMsg = sensor_msgs::msg::Image;
     typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::msg::Image, sensor_msgs::msg::Image> approximate_sync_policy;
@@ -42,6 +44,8 @@ private:
     std::shared_ptr<message_filters::Subscriber<sensor_msgs::msg::Image> > right_sub;
 
     std::shared_ptr<message_filters::Synchronizer<approximate_sync_policy> > syncApproximate;
+
+    std::unique_ptr<image_transport::ImageTransport> m_image_transport;
 };
 
 
