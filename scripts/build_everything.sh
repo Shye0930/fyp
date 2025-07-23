@@ -61,12 +61,13 @@ echo "Building ROS2 Image_masker"
 colcon build --symlink-install --packages-select image_masker
 
 echo " "
+echo "Building ROS2 stereo camera pipeline"
+colcon build --symlink-install --packages-select stereo_camera_pipeline
+
+echo " "
 echo "Building ROS2 wrapper for orb slam3"
 colcon build --symlink-install --packages-select orbslam3
 
-echo " "
-echo "Building ROS2 stereo camera pipeline"
-colcon build --symlink-install --packages-select stereo_camera_pipeline
 
 
 
