@@ -43,8 +43,6 @@ make -j$(nproc)
 
 echo " "
 echo "Converting vocabulary to binary"
-rm -f bin_vocabulary
-cd ..
 ./tools/bin_vocabulary
 
 echo " "
