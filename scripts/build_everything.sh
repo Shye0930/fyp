@@ -69,3 +69,4 @@ echo " "
 echo "Building ROS2 Image_masker"
 colcon build --symlink-install --packages-select image_masker
 
+
