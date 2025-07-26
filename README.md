@@ -9,7 +9,7 @@
 
 
 ## Pre-requisites installation guide
-The comprehensive guide for installing all necessary pre-requisites is available [here](https://github.com/NAIRBS/ORBSLAM3-Ubuntu-20.04)
+1. The comprehensive guide for installing all necessary pre-requisites is available [here](https://github.com/NAIRBS/ORBSLAM3-Ubuntu-20.04)
 
 
 ## Setting up swap
@@ -102,6 +102,9 @@ ros2 launch stereo_camera_pipeline stereo_pipeline.launch.py
 
 # To boot up orb slam3
 ros2 run orbslam3 stereo /home/shye/Desktop/projects/fyp/ORB_SLAM_3_COMMUNITY/Vocabulary/ORBvoc.txt /home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml
+
+# To launch Rviz
+ros2 run rviz2 rviz2 -d config/stereo/orb_slam3_no_imu.rviz
 ```
 
 ## Running Stereo Obstacle detector
@@ -132,6 +135,18 @@ ros2 launch stereo_obstacle_detector stereo_detector.launch.py
 Run with:
 ```sh
 ros2 launch image_masker image_masker.launch.py
+```
+
+
+## Navigational speaker
+```sh
+pip3 install gtts
+sudo apt install xdg-utils
+sudo apt install mpv
+
+
+# Script is run 
+python3 src/text_to_speech.py
 ```
 
 ## Debug info used through the repo

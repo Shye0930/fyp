@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 project(envision_interfaces)
 
 # Default to C99
@@ -15,7 +15,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wno-dev)
 endif()
 
- add_compile_options(-Wno-dev)
+add_compile_options(-Wno-dev)
 
 find_package(ament_cmake REQUIRED)
 find_package(builtin_interfaces REQUIRED)
@@ -26,8 +26,13 @@ set(msg_files
 "msg/ObstacleStatus.msg"
 )
 
+set(srv_files
+"srv/SaveMap.srv"
+)
+
 rosidl_generate_interfaces(${PROJECT_NAME}
   ${msg_files}
+  ${srv_files}
   DEPENDENCIES builtin_interfaces
   ADD_LINTER_TESTS
 )
