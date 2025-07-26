@@ -24,6 +24,7 @@ mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j$(nproc)
+sudo make install
 
 echo " "
 echo "Uncompress vocabulary ..."
@@ -43,9 +44,12 @@ make -j$(nproc)
 
 echo " "
 echo "Converting vocabulary to binary"
-rm -f bin_vocabulary
 cd ..
 ./tools/bin_vocabulary
+
+echo " "
+echo "Building ROS2 Envision custom interfaces"
+colcon build --symlink-install --packages-select envision_interfaces
 
 echo " "
 echo "Building ROS2 wrapper for orb slam3"
@@ -58,17 +62,10 @@ echo "Building ROS2 stereo camera pipeline"
 colcon build --symlink-install --packages-select stereo_camera_pipeline
 
 echo " "
-echo "Building ROS2 Envision custom interfaces"
-colcon build --symlink-install --packages-select envision_interfaces
-
-
-echo " "
 echo "Building ROS2 Stereo_obstacle_detector"
 colcon build --symlink-install --packages-select stereo_obstacle_detector
 
 echo " "
 echo "Building ROS2 Image_masker"
 colcon build --symlink-install --packages-select image_masker
-
-
 

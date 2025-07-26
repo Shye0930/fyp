@@ -148,4 +148,4 @@ Viewer.ViewpointF: 500.0
 
 
 # System.LoadAtlasFromFile: "./yourdirectory/atlas"
-System.SaveAtlasToFile: ".mapping"
+#System.SaveAtlasToFile: ".mapping"

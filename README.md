@@ -137,6 +137,18 @@ Run with:
 ros2 launch image_masker image_masker.launch.py
 ```
 
+
+## Navigational speaker
+```sh
+pip3 install gtts
+sudo apt install xdg-utils
+sudo apt install mpv
+
+
+# Script is run 
+python3 src/text_to_speech.py
+```
+
 ## Debug info used through the repo
 
 [INFO]: For informational messages, especially when the code is doing something expected but noteworthy (e.g., successful initialization, a specific mode being activated).

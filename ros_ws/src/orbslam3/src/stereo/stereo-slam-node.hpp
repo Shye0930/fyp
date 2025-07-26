@@ -40,6 +40,10 @@ private:
     cv_bridge::CvImageConstPtr cv_ptrLeft;
     cv_bridge::CvImageConstPtr cv_ptrRight;
 
+    std::string world_frame_id;
+    std::string cam_frame_id;
+    std::string imu_frame_id;
+
     std::shared_ptr<message_filters::Subscriber<sensor_msgs::msg::Image> > left_sub;
     std::shared_ptr<message_filters::Subscriber<sensor_msgs::msg::Image> > right_sub;
 

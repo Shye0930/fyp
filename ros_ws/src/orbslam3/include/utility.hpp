@@ -86,17 +86,17 @@ extern image_transport::Publisher tracking_img_pub;
 void setup_services(std::shared_ptr<rclcpp::Node> node, const std::string &node_name, ORB_SLAM3::System* pSLAM_instance);
 void setup_publishers(std::shared_ptr<rclcpp::Node> node, image_transport::ImageTransport &image_transport,const std::string &node_name);
 
-void publish_topics(ORB_SLAM3::System* pSLAM_instance, const rclcpp::Time &msg_time, const Eigen::Vector3f &Wbb = Eigen::Vector3f::Zero());
+void publish_topics(ORB_SLAM3::System* pSLAM_instance,const rclcpp::Time &msg_time, const std::string world_frame_id, const std::string cam_frame_id, const std::string imu_frame_id,const Eigen::Vector3f &Wbb = Eigen::Vector3f::Zero());
 
-void publish_camera_pose(ORB_SLAM3::System* pSLAM_instance, const Sophus::SE3f &Tcw_SE3f, const rclcpp::Time &msg_time);
-void publish_tracking_img(ORB_SLAM3::System* pSLAM_instance, cv::Mat image, rclcpp::Time msg_time);
-void publish_tracked_points(ORB_SLAM3::System* pSLAM_instance, std::vector<ORB_SLAM3::MapPoint*> tracked_points, rclcpp::Time msg_time);
-void publish_keypoints(ORB_SLAM3::System* pSLAM_instance, std::vector<ORB_SLAM3::MapPoint*> tracked_map_points, std::vector<cv::KeyPoint> tracked_keypoints, rclcpp::Time msg_time);
+void publish_camera_pose(ORB_SLAM3::System* pSLAM_instance,const std::string world_frame_id,const Sophus::SE3f &Tcw_SE3f, const rclcpp::Time &msg_time);
+void publish_tracking_img(ORB_SLAM3::System* pSLAM_instance,const std::string world_frame_id,cv::Mat image, rclcpp::Time msg_time);
+void publish_tracked_points(ORB_SLAM3::System* pSLAM_instance,const std::string world_frame_id,std::vector<ORB_SLAM3::MapPoint*> tracked_points, rclcpp::Time msg_time);
+void publish_keypoints(ORB_SLAM3::System* pSLAM_instance,const std::string world_frame_id,std::vector<ORB_SLAM3::MapPoint*> tracked_map_points, std::vector<cv::KeyPoint> tracked_keypoints, rclcpp::Time msg_time);
+void publish_all_points(ORB_SLAM3::System* pSLAM_instance,const std::string world_frame_id,std::vector<ORB_SLAM3::MapPoint*> map_points, rclcpp::Time msg_time);
 
-void publish_all_points(ORB_SLAM3::System* pSLAM_instance, std::vector<ORB_SLAM3::MapPoint*> map_points, rclcpp::Time msg_time);
 void publish_tf_transform(ORB_SLAM3::System* pSLAM_instance, Sophus::SE3f T_SE3f, std::string frame_id, std::string child_frame_id, rclcpp::Time msg_time);
-void publish_body_odom(ORB_SLAM3::System* pSLAM_instance, const Sophus::SE3f &Twb_SE3f,const Eigen::Vector3f &Vwb_E3f,const Eigen::Vector3f &ang_vel_body,const rclcpp::Time &msg_time);
-void publish_kf_markers(ORB_SLAM3::System* pSLAM_instance, std::vector<Sophus::SE3f> vKFposes, rclcpp::Time msg_time);
+void publish_body_odom(ORB_SLAM3::System* pSLAM_instance, const std::string world_frame_id, const std::string imu_frame_id, const Sophus::SE3f &Twb_SE3f,const Eigen::Vector3f &Vwb_E3f,const Eigen::Vector3f &ang_vel_body,const rclcpp::Time &msg_time);
+void publish_kf_markers(ORB_SLAM3::System* pSLAM_instance, const std::string world_frame_id, std::vector<Sophus::SE3f> vKFposes, rclcpp::Time msg_time);
 
 void save_map_srv(ORB_SLAM3::System* pSLAM_instance,const std::shared_ptr<envision_interfaces::srv::SaveMap::Request> req,
     std::shared_ptr<envision_interfaces::srv::SaveMap::Response> res);
@@ -106,7 +106,7 @@ void save_traj_srv(ORB_SLAM3::System* pSLAM_instance, const std::shared_ptr<envi
 
 cv::Mat SE3f_to_cvMat(Sophus::SE3f T_SE3f);
 geometry_msgs::msg::Transform SE3f_to_transform_msg(const Sophus::SE3f &T_SE3f);
-sensor_msgs::msg::PointCloud2 keypoints_to_pointcloud(const std::vector<cv::KeyPoint>& keypoints, rclcpp::Time msg_time);
-sensor_msgs::msg::PointCloud2 mappoint_to_pointcloud(const std::vector<ORB_SLAM3::MapPoint*>& map_points, rclcpp::Time msg_time);
+sensor_msgs::msg::PointCloud2 keypoints_to_pointcloud(const std::vector<cv::KeyPoint>& keypoints,const std::string world_frame_id, rclcpp::Time msg_time);
+sensor_msgs::msg::PointCloud2 mappoint_to_pointcloud(const std::vector<ORB_SLAM3::MapPoint*>& map_points,const std::string world_frame_id, rclcpp::Time msg_time);
 
 #endif

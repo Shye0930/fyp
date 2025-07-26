@@ -1,1 +1,0 @@
-/home/shye/Desktop/projects/fyp/build/stereo_obstacle_detector/launch/stereo_detector.launch.py

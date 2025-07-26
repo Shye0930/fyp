@@ -6,7 +6,7 @@ using std::placeholders::_1;
 using std::placeholders::_2;
 
 StereoSlamNode::StereoSlamNode(ORB_SLAM3::System* pSLAM, const string &strSettingsFile, const string &strDoRectify)
-:   Node("ORB_SLAM3_ROS2"),
+:   Node("orb_slam3"),
     m_SLAM(pSLAM)
 {
     stringstream ss(strDoRectify);
@@ -81,8 +81,6 @@ void StereoSlamNode::initialize()
     m_image_transport = std::make_unique<image_transport::ImageTransport>(this->shared_from_this());
 
     std::string node_name = this->get_name();
-    world_frame_id = "map";
-    cam_frame_id = "camera";
 
     sensor_type = ORB_SLAM3::System::STEREO;
 
@@ -119,6 +117,10 @@ void StereoSlamNode::GrabStereo(const ImageMsg::SharedPtr msgLeft, const ImageMs
     // Copy the ros rgb image message to cv::Mat.
     builtin_interfaces::msg::Time msg_time = msgLeft->header.stamp;
 
+    world_frame_id = "map";
+    cam_frame_id = "camera";
+    imu_frame_id = "imu";
+
     try {
         cv_ptrLeft = cv_bridge::toCvShare(msgLeft);
         cv_ptrRight = cv_bridge::toCvShare(msgRight);
@@ -133,14 +135,14 @@ void StereoSlamNode::GrabStereo(const ImageMsg::SharedPtr msgLeft, const ImageMs
         cv::remap(cv_ptrLeft->image,imLeft,M1l,M2l,cv::INTER_LINEAR);
         cv::remap(cv_ptrRight->image,imRight,M1r,M2r,cv::INTER_LINEAR);
         m_SLAM->TrackStereo(imLeft, imRight, Utility::StampToSec(msgLeft->header.stamp));
-        publish_topics(m_SLAM, msg_time);
+        publish_topics(m_SLAM,msg_time, world_frame_id, cam_frame_id, imu_frame_id );
 
     } else {
         m_SLAM->TrackStereo(cv_ptrLeft->image, cv_ptrRight->image, Utility::StampToSec(msgLeft->header.stamp));
 
         if (m_SLAM->GetTrackingState() == ORB_SLAM3::Tracking::OK) {
             try {
-                publish_topics(m_SLAM, msg_time);
+                publish_topics(m_SLAM,msg_time, world_frame_id, cam_frame_id, imu_frame_id);
             } catch (const std::exception& e) {
                 RCLCPP_ERROR(this->get_logger(), "Exception during publish_topics: %s", e.what());
             }

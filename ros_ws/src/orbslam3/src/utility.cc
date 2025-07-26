@@ -5,8 +5,6 @@
 
 // ORB_SLAM3::System* pSLAM;
 ORB_SLAM3::System::eSensor sensor_type = ORB_SLAM3::System::NOT_SET;
-
-std::string world_frame_id, cam_frame_id, imu_frame_id;
 rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pose_pub;
 rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr tracked_mappoints_pub;
 rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr tracked_keypoints_pub;
@@ -102,8 +100,11 @@ void setup_publishers(std::shared_ptr<rclcpp::Node> node, image_transport::Image
     }
 }
 
-void publish_topics(ORB_SLAM3::System* pSLAM_instance,const rclcpp::Time &msg_time, const Eigen::Vector3f &Wbb)
+void publish_topics(ORB_SLAM3::System* pSLAM_instance,const rclcpp::Time &msg_time, const std::string world_frame_id, const std::string cam_frame_id, const std::string imu_frame_id,const Eigen::Vector3f &Wbb)
 {
+
+    RCLCPP_INFO(rclcpp::get_logger("orbslam3"), "World frame ID: %s, Camera frame ID: %s, IMU frame ID: %s", 
+                world_frame_id.c_str(), cam_frame_id.c_str(), imu_frame_id.c_str());
 
     // *** Crucial Check Here ***
     if (pSLAM_instance == nullptr) {
@@ -119,38 +120,42 @@ void publish_topics(ORB_SLAM3::System* pSLAM_instance,const rclcpp::Time &msg_ti
     if (Twc.translation().array().isNaN()[0] || Twc.rotationMatrix().array().isNaN()(0,0)) // avoid publishing NaN
         return;
 
-    // // Common topics
-    // publish_camera_pose(Twc, msg_time);
-    // publish_tf_transform(Twc, world_frame_id, cam_frame_id, msg_time);
+    
 
-    // publish_tracking_img(pSLAM->GetCurrentFrame(), msg_time);
+    // Common topics
+    publish_camera_pose(pSLAM_instance,world_frame_id,Twc, msg_time);
+    publish_tf_transform(pSLAM_instance,Twc, world_frame_id, cam_frame_id, msg_time);
 
-    // publish_keypoints(pSLAM->GetTrackedMapPoints(), pSLAM->GetTrackedKeyPoints(), msg_time);
+    publish_tracking_img(pSLAM_instance,world_frame_id,pSLAM_instance->GetCurrentFrame(), msg_time);
 
-    // publish_tracked_points(pSLAM->GetTrackedMapPoints(), msg_time);
+    publish_keypoints(pSLAM_instance,world_frame_id,pSLAM_instance->GetTrackedMapPoints(), pSLAM_instance->GetTrackedKeyPoints(), msg_time);
 
-    // publish_all_points(pSLAM->GetAllMapPoints(), msg_time);
-    // publish_kf_markers(pSLAM->GetAllKeyframePoses(), msg_time);
+    publish_tracked_points(pSLAM_instance,world_frame_id,pSLAM_instance->GetTrackedMapPoints(), msg_time);
+
+    publish_all_points(pSLAM_instance,world_frame_id,pSLAM_instance->GetAllMapPoints(), msg_time);
+    publish_kf_markers(pSLAM_instance,world_frame_id,pSLAM_instance->GetAllKeyframePoses(), msg_time);
 
     // IMU-specific topics
-    // if (sensor_type == ORB_SLAM3::System::IMU_MONOCULAR ||
-    //     sensor_type == ORB_SLAM3::System::IMU_STEREO ||
-    //     sensor_type == ORB_SLAM3::System::IMU_RGBD)
-    // {
-    //     Sophus::SE3f Twb = pSLAM->GetImuTwb();
-    //     Eigen::Vector3f Vwb = pSLAM->GetImuVwb();
+    if (sensor_type == ORB_SLAM3::System::IMU_MONOCULAR ||
+         sensor_type == ORB_SLAM3::System::IMU_STEREO ||
+         sensor_type == ORB_SLAM3::System::IMU_RGBD)
+     {
+         Sophus::SE3f Twb = pSLAM_instance->GetImuTwb();
+         Eigen::Vector3f Vwb = pSLAM_instance->GetImuVwb();
 
-    //     Sophus::Matrix3f Rwb = Twb.rotationMatrix();
-    //     Eigen::Vector3f Wwb = Rwb * Wbb;
+         Sophus::Matrix3f Rwb = Twb.rotationMatrix();
+         Eigen::Vector3f Wwb = Rwb * Wbb;
 
-    //     publish_tf_transform(Twb, world_frame_id, imu_frame_id, msg_time);
-    //     publish_body_odom(Twb, Vwb, Wwb, msg_time);
-    // }
+         publish_tf_transform(pSLAM_instance,Twb, world_frame_id, imu_frame_id, msg_time);
+         publish_body_odom(pSLAM_instance, world_frame_id, imu_frame_id,Twb, Vwb, Wwb, msg_time);
+     }
 }
 
 
 
 void publish_body_odom(ORB_SLAM3::System* pSLAM_instance,
+                       const std::string world_frame_id, 
+                       const std::string imu_frame_id,
                        const Sophus::SE3f &Twb_SE3f,
                        const Eigen::Vector3f &Vwb_E3f,
                        const Eigen::Vector3f &ang_vel_body,
@@ -188,7 +193,7 @@ void publish_body_odom(ORB_SLAM3::System* pSLAM_instance,
         odom_pub->publish(odom_msg);  // ROS 2 publishers use `->publish(...)`
 }
 
-void publish_camera_pose(ORB_SLAM3::System* pSLAM_instance,const Sophus::SE3f &Tcw_SE3f, const rclcpp::Time &msg_time)
+void publish_camera_pose(ORB_SLAM3::System* pSLAM_instance,const std::string world_frame_id,const Sophus::SE3f &Tcw_SE3f, const rclcpp::Time &msg_time)
 {
     geometry_msgs::msg::PoseStamped pose_msg;
 
@@ -229,7 +234,7 @@ void publish_tf_transform(ORB_SLAM3::System* pSLAM_instance,Sophus::SE3f T_SE3f,
     tf_broadcaster->sendTransform(tf_msg);
 }
 
-void publish_tracking_img(ORB_SLAM3::System* pSLAM_instance,cv::Mat image, rclcpp::Time msg_time)
+void publish_tracking_img(ORB_SLAM3::System* pSLAM_instance,const std::string world_frame_id,cv::Mat image, rclcpp::Time msg_time)
 {
     std_msgs::msg::Header header;
 
@@ -243,7 +248,7 @@ void publish_tracking_img(ORB_SLAM3::System* pSLAM_instance,cv::Mat image, rclcp
 }
 
 
-void publish_keypoints(ORB_SLAM3::System* pSLAM_instance,std::vector<ORB_SLAM3::MapPoint*> tracked_map_points, std::vector<cv::KeyPoint> tracked_keypoints, rclcpp::Time msg_time)
+void publish_keypoints(ORB_SLAM3::System* pSLAM_instance,const std::string world_frame_id,std::vector<ORB_SLAM3::MapPoint*> tracked_map_points, std::vector<cv::KeyPoint> tracked_keypoints, rclcpp::Time msg_time)
 {   
     std::vector<cv::KeyPoint> finalKeypoints;
 
@@ -268,30 +273,30 @@ void publish_keypoints(ORB_SLAM3::System* pSLAM_instance,std::vector<ORB_SLAM3::
     //cv::imshow("Keypoints", blankImg);
     //cv::waitKey(1); 
 
-    sensor_msgs::msg::PointCloud2 cloud = keypoints_to_pointcloud(finalKeypoints, msg_time);
+    sensor_msgs::msg::PointCloud2 cloud = keypoints_to_pointcloud(finalKeypoints,world_frame_id, msg_time);
 
     if(tracked_keypoints_pub)
         tracked_keypoints_pub->publish(cloud);
 }
 
-void publish_tracked_points(ORB_SLAM3::System* pSLAM_instance,std::vector<ORB_SLAM3::MapPoint*> tracked_points, rclcpp::Time msg_time)
+void publish_tracked_points(ORB_SLAM3::System* pSLAM_instance,const std::string world_frame_id,std::vector<ORB_SLAM3::MapPoint*> tracked_points, rclcpp::Time msg_time)
 {
-    sensor_msgs::msg::PointCloud2 cloud = mappoint_to_pointcloud(tracked_points, msg_time);
+    sensor_msgs::msg::PointCloud2 cloud = mappoint_to_pointcloud(tracked_points,world_frame_id, msg_time);
     
     if(tracked_mappoints_pub)
         tracked_mappoints_pub->publish(cloud);
 }
 
-void publish_all_points(ORB_SLAM3::System* pSLAM_instance,std::vector<ORB_SLAM3::MapPoint*> map_points, rclcpp::Time msg_time)
+void publish_all_points(ORB_SLAM3::System* pSLAM_instance,const std::string world_frame_id,std::vector<ORB_SLAM3::MapPoint*> map_points, rclcpp::Time msg_time)
 {
-    sensor_msgs::msg::PointCloud2 cloud = mappoint_to_pointcloud(map_points, msg_time);
+    sensor_msgs::msg::PointCloud2 cloud = mappoint_to_pointcloud(map_points,world_frame_id, msg_time);
     
     if(all_mappoints_pub)
         all_mappoints_pub->publish(cloud);
 }
 
 // More details: http://docs.ros.org/en/api/visualization_msgs/html/msg/Marker.html
-void publish_kf_markers(ORB_SLAM3::System* pSLAM_instance,std::vector<Sophus::SE3f> vKFposes, rclcpp::Time msg_time)
+void publish_kf_markers(ORB_SLAM3::System* pSLAM_instance, const std::string world_frame_id, std::vector<Sophus::SE3f> vKFposes, rclcpp::Time msg_time)
 {
     int numKFs = vKFposes.size();
     if (numKFs == 0)
@@ -326,7 +331,7 @@ void publish_kf_markers(ORB_SLAM3::System* pSLAM_instance,std::vector<Sophus::SE
         kf_markers_pub->publish(kf_markers);
 }
 
-sensor_msgs::msg::PointCloud2 keypoints_to_pointcloud(const std::vector<cv::KeyPoint>& keypoints, rclcpp::Time msg_time)
+sensor_msgs::msg::PointCloud2 keypoints_to_pointcloud(const std::vector<cv::KeyPoint>& keypoints,const std::string world_frame_id, rclcpp::Time msg_time)
 {
     const int num_channels = 3; // x, y, z
 
@@ -367,7 +372,7 @@ sensor_msgs::msg::PointCloud2 keypoints_to_pointcloud(const std::vector<cv::KeyP
     return cloud;
 }
 
-sensor_msgs::msg::PointCloud2 mappoint_to_pointcloud(const std::vector<ORB_SLAM3::MapPoint*>& map_points, rclcpp::Time msg_time)
+sensor_msgs::msg::PointCloud2 mappoint_to_pointcloud(const std::vector<ORB_SLAM3::MapPoint*>& map_points,const std::string world_frame_id, rclcpp::Time msg_time)
 {
     const int num_channels = 3; // x, y, z
 
