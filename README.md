@@ -11,6 +11,13 @@
 ## Pre-requisites installation guide
 1. The comprehensive guide for installing all necessary pre-requisites is available [here](https://github.com/NAIRBS/ORBSLAM3-Ubuntu-20.04)
 
+2. KITTI Dataset (Optional)
+    
+- Download the dataset (grayscale images) from http://www.cvlibs.net/datasets/kitti/eval_odometry.php
+
+- Execute the following command. Change KITTIX.yaml by KITTI00-02.yaml, KITTI03.yaml or KITTI04-12.yaml for sequence 0 to 2, 3, and 4 to 12 respectively. Change PATH_TO_DATASET_FOLDER to the uncompressed dataset folder. Change SEQUENCE_NUMBER to 00, 01, 02,.., 11.
+
+
 
 ## Setting up swap
 This is only relevant if your system has less than 16 GB of ram. The guide below is found [here](https://askubuntu.com/questions/178712/how-to-increase-swap-space)
@@ -106,6 +113,25 @@ ros2 run orbslam3 stereo /home/shye/Desktop/projects/fyp/ORB_SLAM_3_COMMUNITY/Vo
 # To launch Rviz
 ros2 run rviz2 rviz2 -d config/stereo/orb_slam3_no_imu.rviz
 ```
+
+#### ** Saving the map**
+
+
+* Option 1: If System.SaveAtlasToFile is set in the settings file, the map file will be automatically saved when you kill the ros node.
+
+* Option 2: You can also call the following ros service at the end of the session
+```sh 
+# Before saving, check if the interface exist
+ros2 interface show envision_interfaces/srv/SaveMap
+
+# Check if service exist 
+ros2 service list
+
+ros2 service call /orb_slam3/save_map envision_interfaces/srv/SaveMap "{name: 'kitti_map'}"
+```
+
+
+
 
 ## Running Stereo Obstacle detector
 

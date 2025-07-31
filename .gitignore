@@ -24,3 +24,9 @@ Vocabulary/ORBvoc.bin
 # Ignore Python cache if you use Python
 __pycache__/
 *.pyc
+
+# Ignore the datasets folder
+datasets/
+
+# Ignore all osa map save
+*.osa

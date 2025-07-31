@@ -89,6 +89,14 @@ add_executable(stereo
 
 ament_target_dependencies(stereo ${COMMON_DEPENDENCIES} message_filters) 
 
+add_executable(kitti-stereo
+  src/kitti-stereo/kitti-stereo.cpp
+  src/kitti-stereo/kitti-stereo-slam-node.cpp
+  src/utility.cc
+)
+
+ament_target_dependencies(kitti-stereo ${COMMON_DEPENDENCIES} message_filters) 
+
 add_executable(stereo-inertial
   src/stereo-inertial/stereo-inertial.cpp
   src/stereo-inertial/stereo-inertial-node.cpp
@@ -96,7 +104,8 @@ add_executable(stereo-inertial
 )
 ament_target_dependencies(stereo-inertial ${COMMON_DEPENDENCIES})
 
-install(TARGETS mono rgbd stereo stereo-inertial
+
+install(TARGETS mono rgbd stereo stereo-inertial kitti-stereo
   DESTINATION lib/${PROJECT_NAME})
 
 # Install launch files.
