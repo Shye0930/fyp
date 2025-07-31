@@ -160,7 +160,7 @@ python3 src/text_to_speech.py
 [NOTE]: For important design decisions or caveats.
 
 
-## <h2 style="color:#1F1F1F; background-color:#EDEDED; text-align:center; text-style:bold; font-family:'Chalkboard' ;">Installation Guide </h1>
+## <h2 style="color:#1F1F1F; background-color:#EDEDED; text-align:center; text-style:bold; font-family:'Chalkboard' ;">Installation Guide</h1>
 
 This guide provides step-by-step instructions for installing `librealsense2` and ORB-SLAM3 with its ROS wrapper on an ARM device running Ubuntu 24.04. Use the default terminal for all commands.
 
@@ -233,7 +233,7 @@ sudo make -j$(($(nproc)-1)) install
 
 ---
 
-## Installing ORB-SLAM3 and ROS Wrapper
+### Installing ORB-SLAM3 and ROS Wrapper
 
 ### Prerequisites
 1. **ROS Foxy**: Follow the [ROS Foxy installation guide](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html).
