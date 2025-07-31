@@ -21,6 +21,7 @@ add_compile_options(-w)
 
 # Find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(cv_bridge REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(sensor_msgs REQUIRED)
