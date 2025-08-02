@@ -76,10 +76,17 @@ Within the FYP folder run
 # For Intel realsense d435, run for rgbd
 ros2 launch realsense2_camera rs_launch.py enable_color:=true enable_depth:=true enable_infra1:=false enable_infra2:=false align_depth.enable:=true enable_sync:=true rgb_camera.color_profile:=640x480x30 depth_module.depth_profile:=640x480x30
 
+# Turn on emitter
+ros2 param set /camera/camera depth_module.emitter_enabled 1
+
 ros2 launch orbslam3 d435_rgbd.launch.py
 
 # For Intel realsense d435, run for stereo
 ros2 launch realsense2_camera rs_launch.py enable_color:=false enable_depth:=false enable_infra1:=true enable_infra2:=true depth_module.infra_profile:=640x480x30 
+
+# Turn off emitter
+ros2 param set /camera/camera depth_module.emitter_enabled 0
+
 
 ros2 launch orbslam3 d435_stereo.launch.py
 
