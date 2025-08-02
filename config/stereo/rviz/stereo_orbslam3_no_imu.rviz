@@ -6,7 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /Grid1
       Splitter Ratio: 0.5
     Tree Height: 350
   - Class: rviz_common/Selection
@@ -39,7 +38,7 @@ Visualization Manager:
         X: 0
         Y: 0
         Z: 0
-      Plane: XZ
+      Plane: XY
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
@@ -161,7 +160,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 4096
@@ -181,13 +180,13 @@ Visualization Manager:
         Value: /orb_slam3/tracked_key_points
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Axes Length: 1
       Axes Radius: 0.10000000149011612
       Class: rviz_default_plugins/Pose
       Color: 255; 25; 0
-      Enabled: true
+      Enabled: false
       Head Length: 0.30000001192092896
       Head Radius: 0.10000000149011612
       Name: camera pose
@@ -200,7 +199,7 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /orb_slam3/camera_pose
-      Value: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -243,26 +242,26 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Class: rviz_default_plugins/XYOrbit
-      Distance: 10
+      Class: rviz_default_plugins/Orbit
+      Distance: 4.086756229400635
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
+        X: -0.03692732751369476
+        Y: 0.07441993802785873
+        Z: -0.02651122957468033
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: -1.3097964525222778
+      Pitch: 0.2053978145122528
       Target Frame: <Fixed Frame>
-      Value: XYOrbit (rviz_default_plugins)
-      Yaw: 4.723582744598389
+      Value: Orbit (rviz)
+      Yaw: 4.685399055480957
     Saved: ~
 Window Geometry:
   Displays:

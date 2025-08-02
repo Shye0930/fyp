@@ -25,6 +25,12 @@ int main(int argc, char **argv)
     ORB_SLAM3::System SLAM(argv[1], argv[2], ORB_SLAM3::System::RGBD, visualization);
 
     auto node = std::make_shared<RgbdSlamNode>(&SLAM);
+
+    node->initialize();
+
+    RCLCPP_INFO(node->get_logger(), "RGBD SLAM node initialized and the node name is %s", node->get_name());
+
+
     std::cout << "============================ " << std::endl;
 
     rclcpp::spin(node);

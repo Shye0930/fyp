@@ -29,6 +29,8 @@ public:
 
     ~RgbdSlamNode();
 
+    void initialize();
+
 private:
     using ImageMsg = sensor_msgs::msg::Image;
     typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::msg::Image, sensor_msgs::msg::Image> approximate_sync_policy;
@@ -40,10 +42,17 @@ private:
     cv_bridge::CvImageConstPtr cv_ptrRGB;
     cv_bridge::CvImageConstPtr cv_ptrD;
 
+    std::string world_frame_id;
+    std::string cam_frame_id;
+    std::string imu_frame_id;
+
     std::shared_ptr<message_filters::Subscriber<sensor_msgs::msg::Image> > rgb_sub;
     std::shared_ptr<message_filters::Subscriber<sensor_msgs::msg::Image> > depth_sub;
 
     std::shared_ptr<message_filters::Synchronizer<approximate_sync_policy> > syncApproximate;
+
+    std::unique_ptr<image_transport::ImageTransport> m_image_transport;
+
 };
 
 #endif

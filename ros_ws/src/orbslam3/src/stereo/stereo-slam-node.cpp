@@ -78,6 +78,16 @@ void StereoSlamNode::initialize()
 {
     // Now it's safe to call shared_from_this() because the node is fully constructed
     // and should be managed by a shared_ptr in the calling main function.
+    this->declare_parameter<std::string>("left_topic", "/camera/left");
+    this->declare_parameter<std::string>("right_topic", "/camera/right");
+
+    // 2. Get the values of the parameters.
+    std::string left_topic;
+    std::string right_topic;
+    this->get_parameter("left_topic", left_topic);
+    this->get_parameter("right_topic", right_topic);
+    
+    
     m_image_transport = std::make_unique<image_transport::ImageTransport>(this->shared_from_this());
 
     std::string node_name = this->get_name();
@@ -89,12 +99,13 @@ void StereoSlamNode::initialize()
     setup_services(this->shared_from_this(), node_name, m_SLAM);
 
     // [HACK] Change "/camera/left/image_raw" to "/stereo/left/rectified_images"
-    left_sub = std::make_shared<message_filters::Subscriber<ImageMsg> >(this->shared_from_this(), "/stereo/left/rectified_images");
-    right_sub = std::make_shared<message_filters::Subscriber<ImageMsg> >(this->shared_from_this(), "/stereo/right/rectified_images");
+    left_sub = std::make_shared<message_filters::Subscriber<ImageMsg> >(this->shared_from_this(), left_topic);
+    right_sub = std::make_shared<message_filters::Subscriber<ImageMsg> >(this->shared_from_this(), right_topic);
 
     // pub_rectified_left = this->create_publisher<sensor_msgs::msg::Image>("/stereo/left/rectified_images", 10);
     // pub_rectified_right = this->create_publisher<sensor_msgs::msg::Image>("/stereo/right/rectified_images", 10);
 
+    
     syncApproximate = std::make_shared<message_filters::Synchronizer<approximate_sync_policy> >(approximate_sync_policy(10), *left_sub, *right_sub);
     syncApproximate->registerCallback(&StereoSlamNode::GrabStereo, this);
 }

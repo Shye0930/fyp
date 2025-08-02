@@ -73,11 +73,24 @@ ros2 launch stereo_camera_pipeline stereo_pipeline.launch.py
 
 Within the FYP folder run
 ```sh
+# For Intel realsense d435, run for rgbd
+ros2 launch realsense2_camera rs_launch.py enable_color:=true enable_depth:=true enable_infra1:=false enable_infra2:=false align_depth.enable:=true enable_sync:=true rgb_camera.color_profile:=640x480x30 depth_module.depth_profile:=640x480x30
+
+ros2 launch orbslam3 d435_rgbd.launch.py
+
+# For Intel realsense d435, run for stereo
+ros2 launch realsense2_camera rs_launch.py enable_color:=false enable_depth:=false enable_infra1:=true enable_infra2:=true depth_module.infra_profile:=640x480x30 
+
+ros2 launch orbslam3 d435_stereo.launch.py
+
+
 # To publish the frames of the 2 cameras
 ros2 launch stereo_camera_pipeline stereo_pipeline.launch.py 
 
 # To boot up orb slam3
 ros2 run orbslam3 stereo /home/shye/Desktop/projects/fyp/ORB_SLAM_3_COMMUNITY/Vocabulary/ORBvoc.txt /home/shye/Desktop/projects/fyp/config/stereo/Esp32s.yaml
+
+
 
 # To launch Rviz
 ros2 run rviz2 rviz2 -d config/stereo/orb_slam3_no_imu.rviz

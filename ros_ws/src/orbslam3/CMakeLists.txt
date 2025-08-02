@@ -109,8 +109,8 @@ install(TARGETS mono rgbd stereo stereo-inertial kitti-stereo
   DESTINATION lib/${PROJECT_NAME})
 
 # Install launch files.
-#install(DIRECTORY launch config vocabulary
-#  DESTINATION share/${PROJECT_NAME}/)
+install(DIRECTORY launch
+ DESTINATION share/${PROJECT_NAME}/)
 
 install(PROGRAMS
   src/camera_publisher.py
