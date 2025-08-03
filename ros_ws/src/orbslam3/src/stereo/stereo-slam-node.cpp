@@ -92,8 +92,6 @@ void StereoSlamNode::initialize()
 
     std::string node_name = this->get_name();
 
-    sensor_type = ORB_SLAM3::System::STEREO;
-
     // Setup publishers and services
     setup_publishers(this->shared_from_this(), *m_image_transport, node_name);
     setup_services(this->shared_from_this(), node_name, m_SLAM);

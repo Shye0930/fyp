@@ -25,6 +25,9 @@ int main(int argc, char **argv)
 
     rclcpp::init(argc, argv);
 
+    sensor_type = ORB_SLAM3::System::STEREO;
+
+
     bool visualization = true;
     ORB_SLAM3::System pSLAM(argv[1], argv[2], ORB_SLAM3::System::STEREO, visualization);
 

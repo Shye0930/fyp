@@ -13,7 +13,6 @@ rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr kf_markers_pub;
 rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub;
 image_transport::Publisher tracking_img_pub;
 
-
 void save_map_srv(ORB_SLAM3::System* pSLAM_instance,
                   const std::shared_ptr<envision_interfaces::srv::SaveMap::Request> req,
                   std::shared_ptr<envision_interfaces::srv::SaveMap::Response> res){

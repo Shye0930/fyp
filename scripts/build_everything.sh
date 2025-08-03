@@ -71,7 +71,15 @@ echo "Building ROS2 Image_masker"
 colcon build --symlink-install --packages-select image_masker
 
 echo " "
-echo "Building ROS2 Pointcloud to grid"
-colcon build --symlink-install --packages-select image_masker
+echo "Building ROS2 Grid Map Cmake helpers"
+colcon build --symlink-install --packages-select grid_map_cmake_helpers
+
+echo " "
+echo "Building ROS2 Grid Map msgs"
+colcon build --symlink-install --packages-select grid_map_msgs
+
+echo " "
+echo "Building ROS2 Pointcloud to Grid"
+colcon build --symlink-install --packages-select pointcloud_to_grid
 
 

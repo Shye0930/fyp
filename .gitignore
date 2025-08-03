@@ -28,5 +28,8 @@ __pycache__/
 # Ignore the datasets folder
 datasets/
 
+# Ignore the maps folder
+maps/
+
 # Ignore all osa map save
 *.osa
