@@ -47,8 +47,20 @@ Refer to the calibration tutorial located at:
 
 Tutorial to calibrate [here](./camera/camera_calibration/README.md) 
 
+## List of ros2 packages used in the project
+Below is a comprehensive list of the ROS 2 packages integrated into this project. Each package is linked to its respective section for detailed setup and execution instructions.
 
-## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Stereo Camera Pipeline </h2>
+- [Stereo Camera Pipeline](#stereo-camera-pipeline): Processes and publishes rectified stereo images for downstream applications.
+- [ORB-SLAM3 ROS](#running-orb-slam-3-via-ros2): Implements the ORB-SLAM3 with a ros wrapper to publish point cloud, camera pose and etc.
+- [Stereo Obstacle Detector](#running-stereo-obstacle-detector): Detects obstacles using stereo vision data for obstacle avoidance purposes.
+- [Image Masker](#image-masker): Applies segmentation-based masking to stereo images using YOLO models.
+- [Navigational Speaker](#navigational-speaker): Converts text to speech for navigational audio feedback.
+- [Pointcloud to Grid](#pointcloud-to-grid): Converts point cloud data into 2D occupancy grids for mapping and navigation.
+
+Explore each section for detailed configuration and usage instructions specific to each package.
+
+
+## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Stereo Camera Pipeline</h2>
 
 When utilizing `stereo_processor_node.py` directly or launching it via `ros2 launch stereo_camera_pipeline stereo_pipeline.launch.py`, it is necessary to employ a dedicated configuration file. This is due to differences in the expected YAML format, particularly concerning directives like `%YAML`, which the Python processing in this package may not handle in the same manner as ORB-SLAM3's configuration loader.
 
@@ -74,7 +86,7 @@ Launch the stereo processing pipeline with:
 ros2 launch stereo_camera_pipeline stereo_pipeline.launch.py
 ```
 
-## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Running ORB SLAM 3 via ros2 </h2>
+## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Running ORB SLAM 3 via ros2</h2>
 
 #### **Prequsites**
 - Ensure the ROS 2 topics `/stereo/left/rectified_images` and `/stereo/right/rectified_images` are published using the `stereo_camera_pipeline` package.
@@ -140,7 +152,7 @@ ros2 run rviz2 rviz2 -d config/stereo/orb_slam3_no_imu.rviz
      ros2 service call /orb_slam3/save_map envision_interfaces/srv/SaveMap "{name: 'kitti_map'}"
      ```
 
-## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Running Stereo Obstacle detector </h2>
+## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Running Stereo Obstacle detector</h2>
 
 
 #### **Prequsites**
@@ -155,7 +167,7 @@ Run with:
 ros2 launch stereo_obstacle_detector stereo_detector.launch.py
 ```
 
-## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Image Masker </h2>
+## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Image Masker</h2>
 
 ### Prerequisites
 - Ensure the ROS 2 topics `/stereo/left/rectified_images` and `/stereo/right/rectified_images` are published (e.g., by the `stereo_camera_pipeline` package).
@@ -172,7 +184,7 @@ ros2 launch image_masker image_masker.launch.py
 ```
 
 
-## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Navigational Speaker </h2>
+## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Navigational Speaker</h2>
 ### Prerequisites
 Install the required dependencies:
 ```sh
@@ -187,7 +199,7 @@ Run the script:
 python3 src/text_to_speech.py
 ```
 
-## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Pointcloud to grid </h2>
+## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Pointcloud to grid</h2>
 
 ### Overview
 The `pointcloud_to_grid` package, developed by JKK Research, converts `sensor_msgs/PointCloud2` LIDAR data into `nav_msgs/OccupancyGrid` 2D map data based on intensity and/or height. For more details, visit the repository: [jkk-research/pointcloud_to_grid](https://github.com/jkk-research/pointcloud_to_grid).[](https://github.com/jkk-research/pointcloud_to_grid)
