@@ -187,6 +187,43 @@ Run the script:
 python3 src/text_to_speech.py
 ```
 
+## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Pointcloud to grid </h2>
+
+### Overview
+The `pointcloud_to_grid` package, developed by JKK Research, converts `sensor_msgs/PointCloud2` LIDAR data into `nav_msgs/OccupancyGrid` 2D map data based on intensity and/or height. For more details, visit the repository: [jkk-research/pointcloud_to_grid](https://github.com/jkk-research/pointcloud_to_grid).[](https://github.com/jkk-research/pointcloud_to_grid)
+
+### Prerequisites
+**[Warning]** Ensure the following dependencies are installed and built in the correct order to avoid compilation issues.
+
+#### Required Dependencies
+1. Clone the `grid_map` repository from [ANYbotics/grid_map](https://github.com/ANYbotics/grid_map) using the `foxy-devel` branch:
+   ```sh
+   git clone https://github.com/ANYbotics/grid_map -b foxy-devel
+   ```
+2. Install ROS 2 and PCL (Point Cloud Library) dependencies as required by the package. Ensure you have sourced your ROS 2 workspace:
+   ```sh
+   source ~/ros2_ws/install/setup.bash
+   ```
+
+#### Build Order
+To successfully build the `pointcloud_to_grid` package, follow this specific order:
+1. Build the `grid_map_camke_helpers` CMake helpers first.
+2. Build the `grid_map_msgs` package next.
+3. Finally, build the `pointcloud_to_grid` package.
+
+Example build commands in your ROS 2 workspace:
+```sh
+cd ~/ros2_ws/src
+git clone https://github.com/ANYbotics/grid_map -b foxy-devl
+cd ~/ros2_ws
+```
+Then extract the `grid_map_camke_helpers` and `grid_map_msgs` to your ros workspace folder
+```sh
+colcon build --symlink-install --packages-select grid_map_camke_helpers 
+colcon build --symlink-install --packages-select grid_map_msgs 
+colcon build --symlink-install --packages-select pointcloud_to_grid 
+```
+
 ## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Debug info used throughout the repo </h2>
 
 [INFO]: For informational messages, especially when the code is doing something expected but noteworthy (e.g., successful initialization, a specific mode being activated).
