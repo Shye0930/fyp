@@ -39,6 +39,8 @@ set(INCLUDE_DIRS
   ${nav_msgs_INCLUDE_DIRS}
   ${grid_map_msgs_INCLUDE_DIRS}
   ${rclcpp_components_INCLUDE_DIRS}
+  ${tf2_geometry_msgs_INCLUDE_DIRS}  
+  ${tf2_INCLUDE_DIRS}
 )
 include_directories(${INCLUDE_DIRS})
 

@@ -102,8 +102,8 @@ void setup_publishers(std::shared_ptr<rclcpp::Node> node, image_transport::Image
 void publish_topics(ORB_SLAM3::System* pSLAM_instance,const rclcpp::Time &msg_time, const std::string world_frame_id, const std::string cam_frame_id, const std::string imu_frame_id,const Eigen::Vector3f &Wbb)
 {
 
-    RCLCPP_INFO(rclcpp::get_logger("orbslam3"), "World frame ID: %s, Camera frame ID: %s, IMU frame ID: %s", 
-                world_frame_id.c_str(), cam_frame_id.c_str(), imu_frame_id.c_str());
+    // RCLCPP_INFO(rclcpp::get_logger("orbslam3"), "World frame ID: %s, Camera frame ID: %s, IMU frame ID: %s", 
+    //             world_frame_id.c_str(), cam_frame_id.c_str(), imu_frame_id.c_str());
 
     // *** Crucial Check Here ***
     if (pSLAM_instance == nullptr) {

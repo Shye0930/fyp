@@ -216,6 +216,11 @@ The `pointcloud_to_grid` package, developed by JKK Research, converts `sensor_ms
    ```sh
    source ~/ros2_ws/install/setup.bash
    ```
+3. Install dependencies:
+   ```sh
+   sudo apt install ros-foxy-image-transport-plugins
+   sudo apt-get install ros-foxy-rosbag2-storage-mcap
+   ```
 
 #### Build Order
 To successfully build the `pointcloud_to_grid` package, follow this specific order:
@@ -255,3 +260,11 @@ colcon build --symlink-install --packages-select pointcloud_to_grid
 [NOTE]: For important design decisions or caveats.
 
 
+
+
+# My own pointcloud to grid node:
+
+sudo apt install ros-foxy-sensor-msgs-py
+
+## To save map
+ros2 service call /pointcloud/save_map std_srvs/srv/Trigger

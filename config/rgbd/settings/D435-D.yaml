@@ -69,3 +69,6 @@ Viewer.ViewpointX: 0.0
 Viewer.ViewpointY: -0.7
 Viewer.ViewpointZ: -3.5
 Viewer.ViewpointF: 500.0
+
+
+# System.LoadAtlasFromFile: "maps/rosbag/rgbd/rgbd_house_map"
