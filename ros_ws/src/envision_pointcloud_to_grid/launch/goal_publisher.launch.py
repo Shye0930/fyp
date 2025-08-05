@@ -9,12 +9,17 @@ def generate_launch_description():
             name='goal_publisher',
             output='screen',
             parameters=[
-                {'goal_x': 5.0},
-                {'goal_y': 3.0},
+                {'grid_resolution': 0.1},# meters per cell
+                {'grid_width': 100}, # cells
+                {'grid_height': 100},# cells
+                {'goal_x': 2.0},
+                {'goal_y': 0.0},
                 {'goal_yaw': 90.0},
-                {'goal_radius': 0.5},
+                {'goal_radius': 0.1},
                 {'pose_topic': '/orb_slam3/camera_pose'},
                 {'goal_frame': 'map'},
+                {'map_path': '~/Desktop/fyp/maps/occu_map'},
+                {'visualization_mode': 'matplotlib'},  # Options: 'matplotlib', 'rviz2', 'none'
             ]
         ),
     ])
