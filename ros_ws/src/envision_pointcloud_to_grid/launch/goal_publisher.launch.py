@@ -17,9 +17,9 @@ def generate_launch_description():
                 {'goal_yaw': 90.0},
                 {'goal_radius': 0.1},
                 {'pose_topic': '/orb_slam3/camera_pose'},
-                {'goal_frame': 'map'},
+                {'goal_frame': 'world'},
                 {'map_path': '~/Desktop/fyp/maps/rosbag/stereo/occu_map'},
-                {'visualization_mode': 'matplotlib'},  # Options: 'matplotlib', 'rviz2', 'none'
+                {'visualization_mode': 'rviz2'},  # Options: 'matplotlib', 'rviz2', 'none'
             ]
         ),
     ])
