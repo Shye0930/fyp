@@ -55,7 +55,8 @@ Below is a comprehensive list of the ROS 2 packages integrated into this project
 - [Stereo Obstacle Detector](#running-stereo-obstacle-detector): Detects obstacles using stereo vision data for obstacle avoidance purposes.
 - [Image Masker](#image-masker): Applies segmentation-based masking to stereo images using YOLO models.
 - [Navigational Speaker](#navigational-speaker): Converts text to speech for navigational audio feedback.
-- [Pointcloud to Grid](#pointcloud-to-grid): Converts point cloud data into 2D occupancy grids for mapping and navigation.
+- ~~[Pointcloud to Grid](#pointcloud-to-grid): Converts point cloud data into 2D occupancy grids for mapping and navigation.~~ (Package not in used cause it requires lidar to calculate intensity)
+- [Envision Pointcloud to Grid](#envision-pointcloud-to-grid): Converts point cloud data into 2D occupancy grids for mapping, goal mapping and navigation. 
 
 Explore each section for detailed configuration and usage instructions specific to each package.
 
@@ -241,6 +242,16 @@ colcon build --symlink-install --packages-select grid_map_msgs
 colcon build --symlink-install --packages-select pointcloud_to_grid 
 ```
 
+## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;">Envision Pointcloud to grid</h2>
+
+### My own pointcloud to grid node:
+
+sudo apt install ros-foxy-sensor-msgs-py
+
+### To save map
+ros2 service call /pointcloud/save_map std_srvs/srv/Trigger
+
+
 ## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;"> Debug info used throughout the repo </h2>
 
 [INFO]: For informational messages, especially when the code is doing something expected but noteworthy (e.g., successful initialization, a specific mode being activated).
@@ -261,10 +272,3 @@ colcon build --symlink-install --packages-select pointcloud_to_grid
 
 
 
-
-# My own pointcloud to grid node:
-
-sudo apt install ros-foxy-sensor-msgs-py
-
-## To save map
-ros2 service call /pointcloud/save_map std_srvs/srv/Trigger

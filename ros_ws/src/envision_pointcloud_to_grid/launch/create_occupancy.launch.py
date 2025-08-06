@@ -18,7 +18,7 @@ def generate_launch_description():
                 {'height_min': 0.0},
                 {'height_max': 5.0},
                 {'min_points_per_cell': 5},  # Minimum points to mark cell as occupied
-                {'map_save_path': '~/Desktop/fyp/maps/occu_map'},
+                {'map_save_path': '~/Desktop/fyp/maps/rosbag/stereo/occu_map'},
             ]
         ),
     ])
