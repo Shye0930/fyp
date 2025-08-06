@@ -137,8 +137,8 @@ class NavigationNode(Node):
         # 0 = free, 205 = unknown, 255 = occupied
         normalized_data = np.zeros_like(map_image, dtype=np.int8)
         normalized_data[map_image == 0] = 0    # Free space
-        normalized_data[map_image == 205] = -1  # Unknown
-        normalized_data[map_image == 255] = 100 # Occupied
+        normalized_data[map_image == 205] = -1  # Unknown (free floor)
+        normalized_data[map_image == 255] = 100 # Occupied (walls)
         # Clamp any other values to [-1, 100] to fit the range
         normalized_data = np.clip(normalized_data, -1, 100)
 
@@ -151,10 +151,7 @@ class NavigationNode(Node):
         self.occupancy_grid.info.origin.position.x = -self.grid_width * self.grid_resolution / 2.0
         self.occupancy_grid.info.origin.position.y = -self.grid_height * self.grid_resolution / 2.0
         self.occupancy_grid.info.origin.position.z = 0.0
-        self.occupancy_grid.info.origin.orientation.w = 1.0
-        self.occupancy_grid.info.origin.orientation.x = 0.0
-        self.occupancy_grid.info.origin.orientation.y = 0.0
-        self.occupancy_grid.info.origin.orientation.z = 0.0
+        self.occupancy_grid.info.origin.orientation = Quaternion(x=0.0, y=0.0, z=0.0, w=1.0)  # Identity quaternion
         self.occupancy_grid.data = normalized_data.flatten().tolist()
 
         self.get_logger().info('Map loaded successfully')
@@ -177,7 +174,7 @@ class NavigationNode(Node):
         if (0 <= grid_x < self.grid_width and 0 <= grid_y < self.grid_height):
             index = grid_y * self.grid_width + grid_x
             value = self.occupancy_grid.data[index]
-            return value > 0 or value == -1  # Treat occupied (>0) or unknown (-1) as occupied
+            return value > 0  # Only occupied cells (> 0) are considered obstacles
         return True  # Out of bounds is considered occupied
 
     def bresenham_line(self, x0, y0, x1, y1):
@@ -351,8 +348,10 @@ class NavigationNode(Node):
         if not self.path_calculated:
             if self.occupancy_grid is None:
                 if self.load_map():
+                    self.get_logger().info('Calculating path w/ loaded map ...')
                     self.calculate_90_degree_path()
             else:
+                self.get_logger().info('Calculating path...')
                 self.calculate_90_degree_path()
         else:
             # Check if goal is reached

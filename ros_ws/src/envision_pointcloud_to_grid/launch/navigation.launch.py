@@ -25,7 +25,7 @@ def generate_launch_description():
             name='navigation_node',
             output='screen',
             parameters=[
-                {'goal_x': 2.0},
+                {'goal_x': 3.0},
                 {'goal_y': 0.0},
                 {'goal_yaw': 90.0},
                 {'goal_radius': 0.5},
