@@ -18,7 +18,7 @@ ORBSLAM3-Ubuntu-20.04
 sudo apt-get update && sudo apt-get upgrade && sudo apt-get dist-upgrade
 sudo apt-get install git wget build-essential
 sudo apt update
-sudo apt install build-essential libtool autoconf unzip
+sudo apt install build-essential libtool autoconf unzip openssl libssl-dev
 ```
 
 ### Install CMake from Source
