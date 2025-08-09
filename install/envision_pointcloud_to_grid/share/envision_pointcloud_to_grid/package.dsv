@@ -1,9 +1,0 @@
-source;share/envision_pointcloud_to_grid/hook/pythonpath.ps1
-source;share/envision_pointcloud_to_grid/hook/pythonpath.dsv
-source;share/envision_pointcloud_to_grid/hook/pythonpath.sh
-source;share/envision_pointcloud_to_grid/hook/ament_prefix_path.ps1
-source;share/envision_pointcloud_to_grid/hook/ament_prefix_path.dsv
-source;share/envision_pointcloud_to_grid/hook/ament_prefix_path.sh
-source;../../build/envision_pointcloud_to_grid/share/envision_pointcloud_to_grid/hook/pythonpath_develop.ps1
-source;../../build/envision_pointcloud_to_grid/share/envision_pointcloud_to_grid/hook/pythonpath_develop.dsv
-source;../../build/envision_pointcloud_to_grid/share/envision_pointcloud_to_grid/hook/pythonpath_develop.sh

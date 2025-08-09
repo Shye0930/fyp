@@ -2,7 +2,7 @@
 
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import PointCloud2
+from sensor_msgs.msg import PointCloud2, PointField
 from nav_msgs.msg import OccupancyGrid
 from geometry_msgs.msg import PoseStamped
 import tf2_ros
@@ -15,6 +15,8 @@ import math
 import yaml
 import os
 import cv2
+import numpy as np
+from scipy.spatial import KDTree
 
 class PointCloudToMap(Node):
     def __init__(self):
@@ -23,7 +25,7 @@ class PointCloudToMap(Node):
         # Parameters 
         self.declare_parameter('pointcloud_topic', '/orb_slam3/map_points')
         self.declare_parameter('map_topic', '/map')
-        self.declare_parameter('map_frame', 'map')
+        self.declare_parameter('map_frame', 'world')
         self.declare_parameter('grid_resolution', 0.05)  # meters per cell
         self.declare_parameter('grid_width', 1000)  # cells
         self.declare_parameter('grid_height', 1000)  # cells
@@ -51,7 +53,9 @@ class PointCloudToMap(Node):
             self.pointcloud_topic,
             self.pointcloud_callback,
             10)
-        self.publisher = self.create_publisher(OccupancyGrid, self.map_topic, 10)
+        self.grid_map_publisher = self.create_publisher(OccupancyGrid, self.map_topic, 10)
+        self.modified_pc2_publisher = self.create_publisher(PointCloud2, "grid_pointcloud", 10)
+
 
         # Service for saving map
         self.save_map_service = self.create_service(
@@ -69,14 +73,21 @@ class PointCloudToMap(Node):
         self.occupancy_grid.info.resolution = self.grid_resolution
         self.occupancy_grid.info.width = self.grid_width
         self.occupancy_grid.info.height = self.grid_height
-        self.occupancy_grid.info.origin.position.x = -self.grid_width * self.grid_resolution / 2.0
-        self.occupancy_grid.info.origin.position.y = -self.grid_height * self.grid_resolution / 2.0
+        self.occupancy_grid.info.origin.position.x = -(self.grid_width * self.grid_resolution) / 2.0
+        self.occupancy_grid.info.origin.position.y = -(self.grid_height * self.grid_resolution) / 2.0
         self.occupancy_grid.info.origin.position.z = 0.0
         self.occupancy_grid.info.origin.orientation.w = 1.0
         self.occupancy_grid.info.origin.orientation.x = 0.0
         self.occupancy_grid.info.origin.orientation.y = 0.0
         self.occupancy_grid.info.origin.orientation.z = 0.0
         self.occupancy_grid.data = [-1] * (self.grid_width * self.grid_height)  # Initialize as unknown
+
+        self.topleft_x = (self.grid_width * self.grid_resolution) / 2.0
+        self.bottomright_x = -(self.grid_width * self.grid_resolution) / 2.0
+        self.topleft_y = (self.grid_height * self.grid_resolution) / 2.0
+        self.bottomright_y = -(self.grid_height * self.grid_resolution) / 2.0
+        self.cell_num_x = int(self.grid_width / self.grid_resolution)
+        self.cell_num_y = int(self.grid_height / self.grid_resolution)
         
         # Point count grid for accumulation
         self.point_counts = np.zeros((self.grid_height, self.grid_width), dtype=np.int32)
@@ -88,23 +99,19 @@ class PointCloudToMap(Node):
 
     def pointcloud_callback(self, msg):
         try:
-            # Transform point cloud to map frame if necessary
-            if msg.header.frame_id != self.map_frame:
-                self.transform_pointcloud(msg)
-            else:
-                self.process_pointcloud(msg)
+            self.transform_pointcloud(msg)
         except Exception as e:
             self.get_logger().error(f'Error processing point cloud: {str(e)}')
 
     def transform_pointcloud(self, msg):
         """Transform point cloud to map frame using tf2."""
-        try:
+        try:    
             # Wait for transform
             transform = self.tf_buffer.lookup_transform(
-                self.map_frame,
-                msg.header.frame_id,
+                'world',
+                'map',
                 msg.header.stamp,
-                rclpy.duration.Duration(seconds=1.0))
+                rclpy.duration.Duration(seconds=1.0)) # Timeout 1 second
             
             # Read points
             points = []
@@ -117,23 +124,51 @@ class PointCloudToMap(Node):
                 
                 # Transform point
                 transformed_point = do_transform_point(point_stamped, transform)
+                
                 points.append([
                     transformed_point.point.x,
                     transformed_point.point.y,
                     transformed_point.point.z
                 ])
+
+            # Filter points by height
+            min_z = self.height_min
+            max_z = self.height_max
             
-            self.process_points(points, msg.header.stamp)
+            points_np = np.array(points, dtype=np.float32)
+            mask = (points_np[:, 2] >= min_z) & (points_np[:, 2] <= max_z)
+            points_np = points_np[mask]
+
+            # Delete the outliers
+            if points_np.shape[0] >= 6:  # mean_k=5 + 1
+                tree = KDTree(points_np)
+                dists, _ = tree.query(points_np, k=6)  # k=mean_k + 1 (including self)
+                mean_dists = np.mean(dists[:, 1:], axis=1)  # exclude distance to self
+                mean = np.mean(mean_dists)
+                std = np.std(mean_dists)
+                mask = mean_dists <= mean + 1.0 * std  # std_mul=1.0
+                points_np = points_np[mask]
+
+            header = msg.header
+            header.frame_id = self.map_frame  # Set to the target frame after transformation
+            header.stamp = self.get_clock().now().to_msg()  # Use current time;
+
+            fields = [
+                PointField(name='x', offset=0, datatype=PointField.FLOAT32, count=1),
+                PointField(name='y', offset=4, datatype=PointField.FLOAT32, count=1),
+                PointField(name='z', offset=8, datatype=PointField.FLOAT32, count=1),
+            ]
+
+            transformed_pc_msg = pc2.create_cloud(header, fields, points_np)
+            self.modified_pc2_publisher.publish(transformed_pc_msg)
+            
+            self.process_points(points_np, msg.header.stamp)
         
         except tf2_ros.LookupException as e:
             self.get_logger().warn(f'Transform not available: {str(e)}')
         except tf2_ros.ExtrapolationException as e:
             self.get_logger().warn(f'Transform extrapolation error: {str(e)}')
 
-    def process_pointcloud(self, msg):
-        """Process point cloud directly if already in map frame."""
-        points = [[p[0], p[1], p[2]] for p in pc2.read_points(msg, field_names=("x", "y", "z"), skip_nans=True)]
-        self.process_points(points, msg.header.stamp)
 
     def process_points(self, points, stamp):
         """Process points and update occupancy grid."""
@@ -146,13 +181,15 @@ class PointCloudToMap(Node):
             
             # Filter by height
             if self.height_min <= z <= self.height_max:
-                # Convert to grid coordinates
-                grid_x = int((x - self.occupancy_grid.info.origin.position.x) / self.grid_resolution)
-                grid_y = int((y - self.occupancy_grid.info.origin.position.y) / self.grid_resolution)
-                
-                # Check if within grid bounds
-                if 0 <= grid_x < self.grid_width and 0 <= grid_y < self.grid_height:
-                    self.point_counts[grid_y, grid_x] += 1
+                if x > 0.01 or x < -0.01 :
+
+                    # Convert to grid coordinates
+                    grid_x = int((x - self.occupancy_grid.info.origin.position.x) / self.grid_resolution)
+                    grid_y = int((y - self.occupancy_grid.info.origin.position.y) / self.grid_resolution)
+                    
+                    # Check if within grid bounds
+                    if 0 <= grid_x < self.grid_width and 0 <= grid_y < self.grid_height:
+                        self.point_counts[grid_y, grid_x] += 1
         
         # Update occupancy grid
         for y in range(self.grid_height):
@@ -167,7 +204,7 @@ class PointCloudToMap(Node):
         
         # Update header
         self.occupancy_grid.header.stamp = stamp
-
+ 
     def save_map_callback(self, request, response):
         """Save the occupancy grid to .pgm and .yaml files."""
         try:
@@ -219,7 +256,7 @@ class PointCloudToMap(Node):
 
     def publish_map(self):
         """Publish the occupancy grid."""
-        self.publisher.publish(self.occupancy_grid)
+        self.grid_map_publisher.publish(self.occupancy_grid)
         # self.get_logger().info('Published occupancy grid')
 
 def main(args=None):

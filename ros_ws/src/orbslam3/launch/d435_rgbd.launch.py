@@ -58,8 +58,8 @@ def generate_launch_description():
         name='world_orb_to_world',
         output='screen',
         arguments=[
-            '0', '0', '1',                 # x, y, z translation
-            '0.707', '0', '0', '0.707',      # quaternion (x, y, z, w) for 90-degree rotation
+            '0', '0', '0.85',                 # x, y, z translation
+            '-0.7071068', '0', '0', '0.7071068',      # quaternion (x, y, z, w) for 90-degree rotation
             '/world',                          # parent frame_id
             '/map'                       # child frame_id
         ],

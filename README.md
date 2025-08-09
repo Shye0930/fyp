@@ -270,7 +270,7 @@ ros2 bag record -o my_house_stereo /orb_slam3/all_points /orb_slam3/kf_markers /
 ```
 ### Record rgbd (w/ realsense)
 ```sh
-ros2 bag record -o my_house_stereo /orb_slam3/all_points /orb_slam3/kf_markers /orb_slam3/kf_markers_array /orb_slam3/tracked_points /orb_slam3/tracking_image /orb_slam3_ros/trajectory /camera/camera/color/image_raw /camera/camera/aligned_depth_to_color/image_raw
+ros2 bag record -o my_house_rgbd /orb_slam3/all_points /orb_slam3/kf_markers /orb_slam3/kf_markers_array /orb_slam3/tracked_points /orb_slam3/tracking_image /orb_slam3_ros/trajectory /camera/camera/color/image_raw /camera/camera/aligned_depth_to_color/image_raw
 ```
 
 
