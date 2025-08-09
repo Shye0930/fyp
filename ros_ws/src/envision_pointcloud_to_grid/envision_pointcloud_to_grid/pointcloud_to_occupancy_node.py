@@ -46,6 +46,8 @@ class PointCloudToMap(Node):
         self.min_points_per_cell = int(self.get_parameter('min_points_per_cell').value)
         self.map_save_path = os.path.expanduser(self.get_parameter('map_save_path').value)
 
+        # Debug flag:
+        self.is_process_points_flag_non_spam = True
         
         # Subscribers and Publishers
         self.subscription = self.create_subscription(
@@ -105,7 +107,7 @@ class PointCloudToMap(Node):
 
     def transform_pointcloud(self, msg):
         """Transform point cloud to map frame using tf2."""
-        try:    
+        try:
             # Wait for transform
             transform = self.tf_buffer.lookup_transform(
                 'world',
@@ -166,12 +168,21 @@ class PointCloudToMap(Node):
         
         except tf2_ros.LookupException as e:
             self.get_logger().warn(f'Transform not available: {str(e)}')
+            self.is_process_points_flag_non_spam = True
+
         except tf2_ros.ExtrapolationException as e:
             self.get_logger().warn(f'Transform extrapolation error: {str(e)}')
+            self.is_process_points_flag_non_spam = True
+
 
 
     def process_points(self, points, stamp):
         """Process points and update occupancy grid."""
+        
+        if self.is_process_points_flag_non_spam:
+            self.get_logger().info("Processing process_points")
+            self.is_process_points_flag_non_spam = False
+            
         # Reset point counts for new update
         self.point_counts.fill(0)
         
