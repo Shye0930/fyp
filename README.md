@@ -50,6 +50,7 @@ Tutorial to calibrate [here](./camera/camera_calibration/README.md)
 
 ## Mapping
 [ ] Come out with the steps to perform mapping
+
 [ ] See if I need to think about merging the old pgm maps and stuff to create a bigger occu map
 
 ## Navigation 
@@ -212,7 +213,7 @@ python3 src/text_to_speech.py
 ## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;">Pointcloud to grid</h2>
 
 ### Overview
-The `pointcloud_to_grid` package, developed by JKK Research, converts `sensor_msgs/PointCloud2` LIDAR data into `nav_msgs/OccupancyGrid` 2D map data based on intensity and/or height. For more details, visit the repository: [jkk-research/pointcloud_to_grid](https://github.com/jkk-research/pointcloud_to_grid).[](https://github.com/jkk-research/pointcloud_to_grid)
+The `pointcloud_to_grid` package, developed by JKK Research, converts `sensor_msgs/PointCloud2` LIDAR data into `nav_msgs/OccupancyGrid` 2D map data based on intensity and/or height. For more details, visit the repository: [jkk-research/pointcloud_to_grid](https://github.com/jkk-research/pointcloud_to_grid).
 
 ### Prerequisites
 **[Warning]** Ensure the following dependencies are installed and built in the correct order to avoid compilation issues.

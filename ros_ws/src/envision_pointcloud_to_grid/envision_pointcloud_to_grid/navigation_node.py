@@ -3,6 +3,7 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped, TransformStamped
+from geometry_msgs.msg import PoseArray
 from nav_msgs.msg import Path, OccupancyGrid
 from std_msgs.msg import Bool
 import os
@@ -13,12 +14,16 @@ import json
 from geometry_msgs.msg import Pose, Point, Quaternion
 import math
 import tf2_ros
+import heapq
 
 class NavigationNode(Node):
     def __init__(self):
         super().__init__('navigation_node')
         
         # Parameters
+        self.declare_parameter('start_x', 1.0)
+        self.declare_parameter('start_y', 1.0)
+        self.declare_parameter('is_camera_pose_available', False)
         self.declare_parameter('goal_x', 5.0)
         self.declare_parameter('goal_y', 3.0)
         self.declare_parameter('goal_yaw', 90.0)  # Degrees
@@ -32,6 +37,9 @@ class NavigationNode(Node):
         self.declare_parameter('path_save_path', '~/Desktop/fyp/maps/path.json')
 
         # Get parameters
+        self.start_x = self.get_parameter('start_x').value
+        self.start_y = self.get_parameter('start_y').value
+        self.is_camera_pose_available = self.get_parameter('is_camera_pose_available').value
         self.goal_x = self.get_parameter('goal_x').value
         self.goal_y = self.get_parameter('goal_y').value
         self.goal_yaw = math.radians(self.get_parameter('goal_yaw').value)
@@ -43,6 +51,13 @@ class NavigationNode(Node):
         self.grid_height = self.get_parameter('grid_height').value
         self.goal_radius = self.get_parameter('goal_radius').value
         self.path_save_path = os.path.expanduser(self.get_parameter('path_save_path').value)
+        
+
+        # Debug flag:
+        self.is_goal_publish_flag_non_spam = True
+        self.is_start_publish_flag_non_spam = True
+
+        self.checkpoints = None
 
         # State variables
         self.current_pose = None
@@ -56,20 +71,55 @@ class NavigationNode(Node):
         self.map_publisher = self.create_publisher(OccupancyGrid, '/map', 10)  # Publisher for map
         self.goal_pose_publisher = self.create_publisher(PoseStamped, '/goal_pose', 10)  # Publisher for goal pose
         self.goal_reached_publisher = self.create_publisher(Bool, '/goal_reached', 10)
-        self.pose_subscription = self.create_subscription(
-            PoseStamped,
-            self.pose_topic,
-            self.pose_callback,
-            10)
+        self.declare_parameter('start_pose_topic', '/start_pose')
 
-        # TF Broadcaster
-        self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
+        self.start_pose_publisher = self.create_publisher(PoseStamped, '/start_pose', 10)
+        self.checkpoint_publisher = self.create_publisher(PoseArray, '/checkpoints', 10)
 
+        self.publish_goal_pose()  # Publish goal pose periodically
+
+        if self.is_camera_pose_available:
+            self.pose_subscription = self.create_subscription(
+                PoseStamped,
+                self.pose_topic,
+                self.pose_callback,
+                10)
+        else:
+            # Load the map first
+            self.load_map()
+            self.current_pose = Pose()
+            self.current_pose.position = Point(x=self.start_x, y=self.start_y, z=1.0)
+            self.current_pose.orientation = Quaternion(x=0.0, y=0.0, z=0.0, w=1.0)
+            self.publish_start_pose()
+            self.get_logger().info(f'Using fixed start position: ({self.start_x}, {self.start_y}) since no camera pose is available')
+            
+            self.get_logger().info("Calculating 90 degree path")
+            self.calculate_90_degree_path()
+            
         # Timer for publishing path, map, and goal pose
         self.timer = self.create_timer(1.0, self.timer_callback)
 
         self.get_logger().info('Navigation node initialized')
-        self.publish_goal_pose()  # Publish goal pose on startup
+            
+
+
+    
+
+    # Function to publish start pose using start_x and start_y
+    def publish_start_pose(self):
+        """Publish the start pose as a PoseStamped message using start_x and start_y parameters."""
+        start_pose_msg = PoseStamped()
+        start_pose_msg.header.frame_id = self.goal_frame
+        start_pose_msg.header.stamp = self.get_clock().now().to_msg()
+        start_pose_msg.pose.position = Point(x=self.start_x, y=self.start_y, z=0.0)
+        start_pose_msg.pose.orientation = Quaternion(x=0.0, y=-0.707, z=0.0, w=1.0)  # Default orientation (no rotation)
+
+        self.start_pose_publisher.publish(start_pose_msg)
+        if self.is_start_publish_flag_non_spam:
+            self.is_start_publish_flag_non_spam = False
+            self.get_logger().info(f"Published start pose: x={self.start_x}, y={self.start_y}")
+
+
 
     def publish_goal_pose(self):
         """Publish the goal pose as a PoseStamped message."""
@@ -82,7 +132,10 @@ class NavigationNode(Node):
         quaternion = self.quaternion_from_euler(0, 0, self.goal_yaw)
         goal_pose.pose.orientation = Quaternion(x=0.0, y=-0.707, z=0.0, w=1.0)
         self.goal_pose_publisher.publish(goal_pose)
-        # self.get_logger().info(f'Published goal pose at ({self.goal_x}, {self.goal_y}, {self.goal_yaw} rad)')
+
+        if self.is_goal_publish_flag_non_spam:
+            self.is_goal_publish_flag_non_spam = False
+            self.get_logger().info(f'Published goal pose at ({self.goal_x}, {self.goal_y}, {self.goal_yaw} rad)')
 
     def quaternion_from_euler(self, roll, pitch, yaw):
         """Convert Euler angles to quaternion."""
@@ -151,7 +204,10 @@ class NavigationNode(Node):
         self.occupancy_grid.info.origin.position.x = -self.grid_width * self.grid_resolution / 2.0
         self.occupancy_grid.info.origin.position.y = -self.grid_height * self.grid_resolution / 2.0
         self.occupancy_grid.info.origin.position.z = 0.0
-        self.occupancy_grid.info.origin.orientation = Quaternion(x=0.0, y=0.0, z=0.0, w=1.0)  # Identity quaternion
+        self.occupancy_grid.info.origin.orientation.w = 1.0
+        self.occupancy_grid.info.origin.orientation.x = 0.0
+        self.occupancy_grid.info.origin.orientation.y = 0.0
+        self.occupancy_grid.info.origin.orientation.z = 0.0
         self.occupancy_grid.data = normalized_data.flatten().tolist()
 
         self.get_logger().info('Map loaded successfully')
@@ -170,157 +226,200 @@ class NavigationNode(Node):
         return world_x, world_y
 
     def is_occupied(self, grid_x, grid_y):
-        """Check if a grid cell is occupied."""
-        if (0 <= grid_x < self.grid_width and 0 <= grid_y < self.grid_height):
-            index = grid_y * self.grid_width + grid_x
-            value = self.occupancy_grid.data[index]
-            return value > 0  # Only occupied cells (> 0) are considered obstacles
-        return True  # Out of bounds is considered occupied
+        """Check if a grid cell is occupied, considering user size (0.5m x 0.5m) and 0.1m gap."""
+        # User size: 0.5m x 0.5m, safety gap: 0.1m
+        user_size_m = 0.3  # User width and height in meters
+        safety_gap_m = 0.05 # Safety gap in meters
+        user_cells = int(user_size_m / self.grid_resolution)  # Number of cells for 0.5m
+        safety_cells = int(safety_gap_m / self.grid_resolution)  # Number of cells for 0.1m
+        half_user_cells = user_cells // 2  # Half the user's footprint for centering
 
-    def bresenham_line(self, x0, y0, x1, y1):
-        """Generate points along a straight line using Bresenham's algorithm."""
-        points = []
-        dx = abs(x1 - x0)
-        dy = abs(y1 - y0)
-        sx = 1 if x0 < x1 else -1
-        sy = 1 if y0 < y1 else -1
-        err = dx - dy
+        # Check bounds for the user's footprint
+        if not (half_user_cells <= grid_x < self.grid_width - half_user_cells and
+                half_user_cells <= grid_y < self.grid_height - half_user_cells):
+            return True  # Out of bounds is considered occupied
 
-        while True:
-            points.append((x0, y0))
-            if x0 == x1 and y0 == y1:
-                break
-            e2 = 2 * err
-            if e2 > -dy:
-                err -= dy
-                x0 += sx
-            if e2 < dx:
-                err += dx
-                y0 += sy
-        return points
+        # Check the user's footprint (0.5m x 0.5m) plus safety gap (0.1m)
+        total_cells = half_user_cells + safety_cells
+        for dx in range(-total_cells, total_cells + 1):
+            for dy in range(-total_cells, total_cells + 1):
+                check_x = grid_x + dx
+                check_y = grid_y + dy
+                if not (0 <= check_x < self.grid_width and 0 <= check_y < self.grid_height):
+                    return True  # Out of bounds is occupied
+                index = check_y * self.grid_width + check_x
+                value = self.occupancy_grid.data[index]
+                if value > 0:  # Occupied cell (black pixels)
+                    return True
+        return False
 
+    # Replace the entire def calculate_90_degree_path(self): with this
     def calculate_90_degree_path(self):
-        """Calculate a path with 90-degree turns using a grid-based approach."""
+        """Calculate a path with 90-degree turns using A* on the grid, minimizing turns first, then steps."""
         if self.current_pose is None or self.occupancy_grid is None:
+            self.get_logger().warn('No current pose or occupancy grid available')
             return
 
-        start_x = self.current_pose.pose.position.x
-        start_y = self.current_pose.pose.position.y
+        # Handle inconsistency in current_pose type
+        if isinstance(self.current_pose, PoseStamped):
+            pose = self.current_pose.pose
+        else:
+            pose = self.current_pose
+
+        start_x = pose.position.x
+        start_y = pose.position.y
         end_x = self.goal_x
         end_y = self.goal_y
 
+        self.get_logger().info("Converting world to grid")
+
         # Convert to grid coordinates
-        start_grid_x, start_grid_y = self.world_to_grid(start_x, start_y)
-        end_grid_x, end_grid_y = self.world_to_grid(end_x, end_y)
+        start_grid = self.world_to_grid(start_x, start_y)
+        goal_grid = self.world_to_grid(end_x, end_y)
 
-        # Initialize path and instructions
-        path_points = [(start_grid_x, start_grid_y)]
-        instructions = []
-        current_x, current_y = start_grid_x, start_grid_y
-        target_x, target_y = end_grid_x, end_grid_y
-        direction = self.current_direction  # Start with initial direction
+        if self.is_occupied(start_grid[0], start_grid[1]) or self.is_occupied(goal_grid[0], goal_grid[1]):
+            self.get_logger().warn('Start or goal is occupied or too close to obstacles')
+            return
 
-        while current_x != target_x or current_y != target_y:
-            # Determine the next move (prefer horizontal or vertical)
-            dx = target_x - current_x
-            dy = target_y - current_y
+        self.get_logger().info("Starting A* pathfinding with minimal turns")
 
-            if abs(dx) > abs(dy):
-                # Move horizontally
-                next_x = current_x + (1 if dx > 0 else -1)
-                next_y = current_y
-                next_direction = 0 if dx > 0 else 2  # 0: east, 2: west
-            else:
-                # Move vertically
-                next_x = current_x
-                next_y = current_y + (1 if dy > 0 else -1)
-                next_direction = 1 if dy > 0 else 3  # 1: north, 3: south
+        # Directions: 0: east (1,0), 1: north (0,1), 2: west (-1,0), 3: south (0,-1)
+        directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
 
-            # Check path using Bresenham's line
-            line_points = self.bresenham_line(current_x, current_y, next_x, next_y)
-            clear_path = True
-            for grid_x, grid_y in line_points[1:]:  # Skip start point
-                if self.is_occupied(grid_x, grid_y):
-                    clear_path = False
-                    break
+        # Turn cost: set higher than max possible steps (e.g., 201 for 100x100 grid, max steps ~200)
+        turn_cost = 201
+        step_cost = 1
 
-            if clear_path:
-                current_x, current_y = next_x, next_y
-                path_points.append((current_x, current_y))
-                if next_direction != direction:
-                    turn = (next_direction - direction) % 4
-                    if turn == 1 or turn == 3:
-                        instructions.append("turn right")
-                    elif turn == 2:
-                        instructions.append("turn around")
-                    elif turn == -1 or turn == 3:
-                        instructions.append("turn left")
-                    direction = next_direction
-            else:
-                # Obstacle detected, try the other direction
-                if abs(dx) > abs(dy):
-                    next_y = current_y + (1 if dy > 0 else -1)
-                    next_x = current_x
-                    next_direction = 1 if dy > 0 else 3
-                else:
-                    next_x = current_x + (1 if dx > 0 else -1)
-                    next_y = current_y
-                    next_direction = 0 if dx > 0 else 2
+        # A* setup: state is (grid_x, grid_y, dir)
+        start_state = (start_grid[0], start_grid[1], self.current_direction)
+        frontier = []
+        heapq.heappush(frontier, (0, start_state))
+        came_from = {start_state: None}
+        cost_so_far = {start_state: 0}
 
-                line_points = self.bresenham_line(current_x, current_y, next_x, next_y)
-                clear_path = True
-                for grid_x, grid_y in line_points[1:]:
-                    if self.is_occupied(grid_x, grid_y):
-                        clear_path = False
-                        break
+        while frontier:
+            self.get_logger().info("In frontier....")
+            _, current = heapq.heappop(frontier)
+            current_x, current_y, current_dir = current
 
-                if clear_path:
-                    current_x, current_y = next_x, next_y
-                    path_points.append((current_x, current_y))
-                    if next_direction != direction:
-                        turn = (next_direction - direction) % 4
-                        if turn == 1 or turn == 3:
-                            instructions.append("turn right")
-                        elif turn == 2:
-                            instructions.append("turn around")
-                        elif turn == -1 or turn == 3:
-                            instructions.append("turn left")
-                        direction = next_direction
-                else:
-                    self.get_logger().warn(f'No clear path from ({current_x}, {current_y}) to goal')
-                    break
+            if (current_x, current_y) == goal_grid:
+                break
 
-        # Convert path to world coordinates and calculate distances
-        world_path = []
-        for i in range(len(path_points)):
-            x, y = self.grid_to_world(path_points[i][0], path_points[i][1])
-            world_path.append((x, y))
-            if i > 0:
-                prev_x, prev_y = world_path[i-1]
-                distance = math.sqrt((x - prev_x)**2 + (y - prev_y)**2)
-                if instructions:
-                    self.get_logger().info(f"{instructions[i-1]}, walk approximately {distance:.1f} meters")
+            for new_dir in range(4):
+                dx, dy = directions[new_dir]
+                neighbor_x = current_x + dx
+                neighbor_y = current_y + dy
+                neighbor_state = (neighbor_x, neighbor_y, new_dir)
+
+                if not (0 <= neighbor_x < self.grid_width and 0 <= neighbor_y < self.grid_height):
+                    continue
+                if self.is_occupied(neighbor_x, neighbor_y):
+                    continue
+
+                extra_turn_cost = turn_cost if new_dir != current_dir else 0
+                new_cost = cost_so_far[current] + step_cost + extra_turn_cost
+
+                if neighbor_state not in cost_so_far or new_cost < cost_so_far[neighbor_state]:
+                    cost_so_far[neighbor_state] = new_cost
+                    # Heuristic: Manhattan distance (ignores direction and turns, admissible)
+                    manhattan = abs(neighbor_x - goal_grid[0]) + abs(neighbor_y - goal_grid[1])
+                    priority = new_cost + manhattan
+                    heapq.heappush(frontier, (priority, neighbor_state))
+                    came_from[neighbor_state] = current
+
+        if goal_grid not in [(s[0], s[1]) for s in came_from]:
+            self.get_logger().warn('No path found to goal')
+            return
+
+        # Reconstruct grid path: find the goal state (any dir)
+        goal_state = next(s for s in came_from if (s[0], s[1]) == goal_grid)
+        grid_path = []
+        current = goal_state
+        while current is not None:
+            grid_path.append((current[0], current[1]))
+            current = came_from[current]
+        grid_path.reverse()  # From start to goal
+
+        # Convert to world coordinates
+        world_path = [self.grid_to_world(gx, gy) for gx, gy in grid_path]
+
+        self.get_logger().info("Creating path message")
 
         # Create Path message
         path_msg = Path()
         path_msg.header.frame_id = self.goal_frame
         path_msg.header.stamp = self.get_clock().now().to_msg()
-        for x, y in world_path:
-            pose = PoseStamped()
-            pose.header = path_msg.header
-            pose.pose.position = Point(x=x, y=y, z=0.0)
-            pose.pose.orientation = Quaternion(w=1.0)  # No rotation for simplicity
-            path_msg.poses.append(pose)
+        for wx, wy in world_path:
+            pose_stamped = PoseStamped()
+            pose_stamped.header = path_msg.header
+            pose_stamped.pose.position = Point(x=wx, y=wy, z=0.0)
+            pose_stamped.pose.orientation = Quaternion(w=1.0)
+            path_msg.poses.append(pose_stamped)
 
         self.path = path_msg
         self.path_calculated = True
-        self.current_direction = direction  # Update current direction
 
         # Save path to file
         path_data = [{'x': p.pose.position.x, 'y': p.pose.position.y} for p in path_msg.poses]
         with open(self.path_save_path, 'w') as f:
             json.dump(path_data, f)
         self.get_logger().info(f'Path saved to {self.path_save_path}')
+
+        # Find checkpoints: start, turn points, goal
+        checkpoints_grid = [grid_path[0]]
+        for i in range(1, len(grid_path) - 1):
+            prev = grid_path[i - 1]
+            curr = grid_path[i]
+            next_p = grid_path[i + 1]
+            dx1, dy1 = curr[0] - prev[0], curr[1] - prev[1]
+            dx2, dy2 = next_p[0] - curr[0], next_p[1] - curr[1]
+            if (dx1, dy1) != (dx2, dy2):
+                checkpoints_grid.append(curr)
+        checkpoints_grid.append(grid_path[-1])
+
+        # Convert to unique world checkpoints
+        unique_checkpoints = [self.grid_to_world(gx, gy) for gx, gy in checkpoints_grid]
+
+        # Publish checkpoints
+        cp_msg = PoseArray()
+        cp_msg.header = path_msg.header
+        for cx, cy in unique_checkpoints:
+            pose = Pose()
+            pose.position = Point(x=cx, y=cy, z=0.0)
+            pose.orientation = Quaternion(w=1.0)
+            cp_msg.poses.append(pose)
+        self.checkpoints = cp_msg
+
+        self.get_logger().info("Generating instructions")
+
+        # Generate instructions based on checkpoints
+        direction_map = {(1, 0): 0, (-1, 0): 2, (0, 1): 1, (0, -1): 3}  # east, west, north, south
+        current_dir = self.current_direction
+
+        for i in range(len(checkpoints_grid) - 1):
+            start_cp = checkpoints_grid[i]
+            end_cp = checkpoints_grid[i + 1]
+            dx = 1 if end_cp[0] > start_cp[0] else -1 if end_cp[0] < start_cp[0] else 0
+            dy = 1 if end_cp[1] > start_cp[1] else -1 if end_cp[1] < start_cp[1] else 0
+            seg_dir = direction_map.get((dx, dy))
+            if seg_dir is None:
+                continue  # Skip if no movement
+            dist = math.sqrt((self.grid_resolution * (end_cp[0] - start_cp[0]))**2 + (self.grid_resolution * (end_cp[1] - start_cp[1]))**2)
+
+            if dist > 0:
+                turn = (seg_dir - current_dir) % 4
+                if turn == 1:
+                    self.get_logger().info('Turn right')
+                elif turn == 3:
+                    self.get_logger().info('Turn left')
+                elif turn == 2:
+                    self.get_logger().info('Turn around')
+                self.get_logger().info(f'Walk approximately {dist:.1f} meters')
+                current_dir = seg_dir
+
+        self.current_direction = current_dir
+
+
 
     def load_saved_path(self):
         """Load a previously saved path if it exists."""
@@ -351,6 +450,7 @@ class NavigationNode(Node):
                     self.get_logger().info('Calculating path w/ loaded map ...')
                     self.calculate_90_degree_path()
             else:
+                # TODO: MAKE IT THROW ERROR TO SAY NEED TO LOAD MAP
                 self.get_logger().info('Calculating path...')
                 self.calculate_90_degree_path()
         else:
@@ -373,6 +473,13 @@ class NavigationNode(Node):
             self.path.header.stamp = self.get_clock().now().to_msg()
             self.path_publisher.publish(self.path)
         self.publish_goal_pose()  # Publish goal pose periodically
+
+        if self.checkpoints is not None:
+            self.checkpoints.header.stamp = self.get_clock().now().to_msg()
+            self.checkpoint_publisher.publish(self.checkpoints)
+
+        if not self.is_camera_pose_available:
+            self.publish_start_pose()
 
 def main(args=None):
     rclpy.init(args=args)

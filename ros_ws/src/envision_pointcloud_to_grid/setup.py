@@ -26,7 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'pointcloud_to_occupancy_node = envision_pointcloud_to_grid.pointcloud_to_occupancy_node:main',
-            'goal_publisher = envision_pointcloud_to_grid.goal_publisher:main',
+            'goal_viewer = envision_pointcloud_to_grid.goal_viewer:main',
             'navigation_node= envision_pointcloud_to_grid.navigation_node:main',
         ],
     },
