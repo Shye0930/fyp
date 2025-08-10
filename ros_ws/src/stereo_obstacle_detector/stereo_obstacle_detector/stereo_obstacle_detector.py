@@ -38,16 +38,23 @@ class StereoObstacleDetector(Node):
         self.focal_length = self.get_parameter('focal_length').value
         self.baseline = self.get_parameter('baseline').value
 
+        # Declare parameters for image topics
+        self.declare_parameter('left_topic', '/stereo/left/rectified_images')
+        self.declare_parameter('right_topic', '/stereo/right/rectified_images')
+
+        left_topic = self.get_parameter('left_topic').value
+        right_topic = self.get_parameter('right_topic').value
+
         # Subscribers for rectified stereo images
         self.left_image_sub = self.create_subscription(
             Image,
-            '/stereo/left/rectified_images',
+            left_topic,
             self.left_image_callback,
             10
         )
         self.right_image_sub = self.create_subscription(
             Image,
-            '/stereo/right/rectified_images',
+            right_topic,
             self.right_image_callback,
             10
         )

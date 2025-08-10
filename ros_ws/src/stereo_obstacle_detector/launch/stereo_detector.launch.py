@@ -23,17 +23,8 @@ def generate_launch_description():
             {'uniqueness_ratio': 10}, # was 10,13
             {'speckle_window_size': 100},
             {'speckle_range': 1},
-
-
-            # Backup
-            # {'min_disparity': 0},
-            # {'num_disparities': 32},# was 64 (must be factor of 16)
-            # {'block_size': 4}, 
-            # {'disp12_max_diff': 4}, # was 1 
-            # {'uniqueness_ratio': 16}, # was 10,13
-            # {'speckle_window_size': 16384},
-            # {'speckle_range': 1024},
-
+            {'left_topic': '/camera/camera/infra1/image_rect_raw'},
+            {'right_topic': '/camera/camera/infra2/image_rect_raw'},
             
             # Obstacle detection threshold
             {'obstacle_distance_threshold_m': 1.5},
@@ -41,6 +32,16 @@ def generate_launch_description():
             # --- Your new parameters for focal length and baseline ---
             {'focal_length': 485.9461},
             {'baseline': 0.078453409},
+
+
+             # Backup
+            # {'min_disparity': 0},
+            # {'num_disparities': 32},# was 64 (must be factor of 16)
+            # {'block_size': 4}, 
+            # {'disp12_max_diff': 4}, # was 1 
+            # {'uniqueness_ratio': 16}, # was 10,13
+            # {'speckle_window_size': 16384},
+            # {'speckle_range': 1024},
             ]
         )
     ])
