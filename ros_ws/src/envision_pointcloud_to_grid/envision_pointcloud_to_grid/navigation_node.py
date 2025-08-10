@@ -76,7 +76,10 @@ class NavigationNode(Node):
         self.start_pose_publisher = self.create_publisher(PoseStamped, '/start_pose', 10)
         self.checkpoint_publisher = self.create_publisher(PoseArray, '/checkpoints', 10)
 
-        self.publish_goal_pose()  # Publish goal pose periodically
+        self.publish_goal_pose() 
+
+        self.segment_instructions = []
+        self.current_segment = 0
 
         if self.is_camera_pose_available:
             self.pose_subscription = self.create_subscription(
@@ -95,14 +98,17 @@ class NavigationNode(Node):
             
             self.get_logger().info("Calculating 90 degree path")
             self.calculate_90_degree_path()
-            
+
+            if self.segment_instructions:
+                self.get_logger().info('Navigation instructions:')
+                for instr in self.segment_instructions:
+                    self.get_logger().info(f'Instruct: {instr}')
+                        
         # Timer for publishing path, map, and goal pose
         self.timer = self.create_timer(1.0, self.timer_callback)
 
         self.get_logger().info('Navigation node initialized')
             
-
-
     
 
     # Function to publish start pose using start_x and start_y
@@ -129,7 +135,6 @@ class NavigationNode(Node):
         goal_pose.pose.position.x = self.goal_x
         goal_pose.pose.position.y = self.goal_y
         goal_pose.pose.position.z = 0.0
-        quaternion = self.quaternion_from_euler(0, 0, self.goal_yaw)
         goal_pose.pose.orientation = Quaternion(x=0.0, y=-0.707, z=0.0, w=1.0)
         self.goal_pose_publisher.publish(goal_pose)
 
@@ -137,21 +142,6 @@ class NavigationNode(Node):
             self.is_goal_publish_flag_non_spam = False
             self.get_logger().info(f'Published goal pose at ({self.goal_x}, {self.goal_y}, {self.goal_yaw} rad)')
 
-    def quaternion_from_euler(self, roll, pitch, yaw):
-        """Convert Euler angles to quaternion."""
-        cy = math.cos(yaw * 0.5)
-        sy = math.sin(yaw * 0.5)
-        cp = math.cos(pitch * 0.5)
-        sp = math.sin(pitch * 0.5)
-        cr = math.cos(roll * 0.5)
-        sr = math.sin(roll * 0.5)
-
-        q = [0.0, 0.0, 0.0, 0.0]
-        q[0] = sr * cp * cy - cr * sp * sy
-        q[1] = cr * sp * cy + sr * cp * sy
-        q[2] = cr * cp * sy - sr * sp * cy
-        q[3] = cr * cp * cy + sr * sp * sy
-        return q
 
     def load_map(self):
         """Load the occupancy grid from .pgm and .yaml files."""
@@ -253,7 +243,6 @@ class NavigationNode(Node):
                     return True
         return False
 
-    # Replace the entire def calculate_90_degree_path(self): with this
     def calculate_90_degree_path(self):
         """Calculate a path with 90-degree turns using A* on the grid, minimizing turns first, then steps."""
         if self.current_pose is None or self.occupancy_grid is None:
@@ -391,6 +380,7 @@ class NavigationNode(Node):
         self.checkpoints = cp_msg
 
         self.get_logger().info("Generating instructions")
+        self.segment_instructions = []
 
         # Generate instructions based on checkpoints
         direction_map = {(1, 0): 0, (-1, 0): 2, (0, 1): 1, (0, -1): 3}  # east, west, north, south
@@ -408,17 +398,22 @@ class NavigationNode(Node):
 
             if dist > 0:
                 turn = (seg_dir - current_dir) % 4
+                instruction = ''
                 if turn == 1:
                     self.get_logger().info('Turn right')
+                    instruction += 'Turn right\n'
                 elif turn == 3:
                     self.get_logger().info('Turn left')
+                    instruction += 'Turn left\n'
                 elif turn == 2:
                     self.get_logger().info('Turn around')
+                    instruction += 'Turn around\n'
                 self.get_logger().info(f'Walk approximately {dist:.1f} meters')
+                instruction += f'Walk approximately {dist:.1f} meters'
+                self.segment_instructions.append(instruction)
                 current_dir = seg_dir
 
         self.current_direction = current_dir
-
 
 
     def load_saved_path(self):
@@ -440,7 +435,7 @@ class NavigationNode(Node):
                 self.get_logger().info(f'Loaded saved path from {self.path_save_path}')
             return True
         return False
-
+    
     def pose_callback(self, msg):
         """Handle camera pose updates and trigger path calculation."""
         self.current_pose = msg
@@ -449,10 +444,17 @@ class NavigationNode(Node):
                 if self.load_map():
                     self.get_logger().info('Calculating path w/ loaded map ...')
                     self.calculate_90_degree_path()
+                else:
+                    self.get_logger().error('Failed to load map. Map is required for path calculation.')
+                    return
             else:
-                # TODO: MAKE IT THROW ERROR TO SAY NEED TO LOAD MAP
                 self.get_logger().info('Calculating path...')
                 self.calculate_90_degree_path()
+            
+            # After calculating path, output the first instruction if available
+            if self.segment_instructions:
+                self.get_logger().info('Starting navigation with first instruction:')
+                self.get_logger().info(self.segment_instructions[0])
         else:
             # Check if goal is reached
             dx = msg.pose.position.x - self.goal_x
@@ -463,6 +465,21 @@ class NavigationNode(Node):
                 goal_reached_msg.data = True
                 self.goal_reached_publisher.publish(goal_reached_msg)
                 self.get_logger().info('Goal reached!')
+            
+            # Check if reached the next checkpoint
+            if self.current_segment < len(self.segment_instructions):
+                next_cp_index = self.current_segment + 1
+                if next_cp_index < len(self.checkpoints.poses):
+                    next_cp = self.checkpoints.poses[next_cp_index]
+                    dx = msg.pose.position.x - next_cp.position.x
+                    dy = msg.pose.position.y - next_cp.position.y
+                    dist = math.sqrt(dx**2 + dy**2)
+                    if dist <= self.goal_radius:
+                        self.current_segment += 1
+                        if self.current_segment < len(self.segment_instructions):
+                            # TODO: This is where i add txt to speech
+                            self.get_logger().info('Reached checkpoint! Next instruction:')
+                            self.get_logger().info(self.segment_instructions[self.current_segment])
 
     def timer_callback(self):
         """Publish the planned path, map, and goal pose if calculated."""

@@ -9,8 +9,8 @@ def generate_launch_description():
             name='navigation_node',
             output='screen',
             parameters=[
-                {'start_x': 1.5},
-                {'start_y': 0.1},
+                {'start_x': -1.0},
+                {'start_y': -0.6},
                 {'is_camera_pose_available': False},
                 {'goal_x': 4.0},
                 {'goal_y': 1.0},
