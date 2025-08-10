@@ -30,7 +30,7 @@ def generate_launch_description():
             {'obstacle_distance_threshold_m': 1.5},
             
             # --- Your new parameters for focal length and baseline ---
-            {'focal_length': 485.9461},
+            {'focal_length': 384.595}, #Ex-esp32 : 485.9461
             {'baseline': 0.078453409},
 
 
