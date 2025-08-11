@@ -34,11 +34,6 @@ int main(int argc, char **argv)
     // Call the new method to process the KITTI sequence
     node->ProcessKITTIStereo();
 
-    // After processing, you can optionally keep the node spinning to keep the ROS 2 graph alive
-    // and allow Rviz to continue displaying the map, or shut down.
-    // For this example, we'll let it shut down after processing the sequence.
-    // If you remove the `rclcpp::shutdown()` call, you can then `rclcpp::spin(node)`
-    // if you want the node to remain active after the sequence is processed (e.g., for service calls).
 
     // Shutdown
     rclcpp::shutdown();

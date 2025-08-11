@@ -41,15 +41,9 @@ void StereoSlamNode::initialize()
 
     // If a KITTI sequence path is provided, we don't need subscribers
     if (m_strPathToSequence.empty()) {
-        // [HACK] Change "/camera/left/image_raw" to "/stereo/left/rectified_images"
-        left_sub = std::make_shared<message_filters::Subscriber<ImageMsg> >(this->shared_from_this(), "/stereo/left/rectified_images");
-        right_sub = std::make_shared<message_filters::Subscriber<ImageMsg> >(this->shared_from_this(), "/stereo/right/rectified_images");
-
-        syncApproximate = std::make_shared<message_filters::Synchronizer<approximate_sync_policy> >(approximate_sync_policy(10), *left_sub, *right_sub);
-        syncApproximate->registerCallback(&StereoSlamNode::GrabStereo, this);
-        RCLCPP_INFO(this->get_logger(), "Subscribing to image topics for stereo input.");
+        RCLCPP_ERROR(this->get_logger(), "No sequence path is provided.");
     } else {
-        RCLCPP_INFO(this->get_logger(), "Processing KITTI sequence directly. Not subscribing to image topics.");
+        RCLCPP_INFO(this->get_logger(), "Processing KITTI sequence directly.");
     }
 }
 
@@ -59,49 +53,8 @@ StereoSlamNode::~StereoSlamNode()
         // Stop all threads
         m_SLAM->Shutdown();
 
-        // Save camera trajectory
-        m_SLAM->SaveKeyFrameTrajectoryTUM("KeyFrameTrajectory.txt");
-        m_SLAM->SaveTrajectoryTUM("Trajectory.txt");
     }
     
-}
-
-void StereoSlamNode::GrabStereo(const ImageMsg::SharedPtr msgLeft, const ImageMsg::SharedPtr msgRight)
-{
-    // This method is now only called if we are subscribing to topics (i.e., m_strPathToSequence is empty)
-    builtin_interfaces::msg::Time msg_time = msgLeft->header.stamp;
-
-    world_frame_id = "map";
-    cam_frame_id = "camera";
-    imu_frame_id = "imu";
-
-    try {
-        cv_ptrLeft = cv_bridge::toCvShare(msgLeft);
-        cv_ptrRight = cv_bridge::toCvShare(msgRight);
-
-    } catch (cv_bridge::Exception& e) {
-        RCLCPP_ERROR(this->get_logger(), "cv_bridge exception: %s", e.what());
-        return;
-    }
-
-    if (doRectify){
-        cv::Mat imLeft, imRight;
-        cv::remap(cv_ptrLeft->image,imLeft,M1l,M2l,cv::INTER_LINEAR);
-        cv::remap(cv_ptrRight->image,imRight,M1r,M2r,cv::INTER_LINEAR);
-        m_SLAM->TrackStereo(imLeft, imRight, Utility::StampToSec(msgLeft->header.stamp));
-        publish_topics(m_SLAM,msg_time, world_frame_id, cam_frame_id, imu_frame_id );
-
-    } else {
-        m_SLAM->TrackStereo(cv_ptrLeft->image, cv_ptrRight->image, Utility::StampToSec(msgLeft->header.stamp));
-
-        if (m_SLAM->GetTrackingState() == ORB_SLAM3::Tracking::OK) {
-            try {
-                publish_topics(m_SLAM,msg_time, world_frame_id, cam_frame_id, imu_frame_id);
-            } catch (const std::exception& e) {
-                RCLCPP_ERROR(this->get_logger(), "Exception during publish_topics: %s", e.what());
-            }
-        }
-    }
 }
 
 void StereoSlamNode::ProcessKITTIStereo()
