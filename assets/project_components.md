@@ -17,7 +17,6 @@ To publish rectified stereo frames, you can choose one of the following methods:
 If you're running the node directly from the Python script located at `src/stereo_processor_node.py`, update the calibration file path on **line 137** to point to your desired YAML calibration file.
 
 #### **Using the ROS 2 Launch System**
-
 Launch the stereo processing pipeline with:
 
 ```sh
@@ -25,6 +24,17 @@ ros2 launch stereo_camera_pipeline stereo_pipeline.launch.py
 ```
 
 ## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;">Running ORB SLAM 3 via ros2</h2>
+
+### **Overview**
+This ROS 2 Foxy package provides a wrapper for ORB-SLAM3, enabling seamless integration with ROS 2 for various sensor modalities. I would like to express my gratitude to the following projects for their inspiration and foundational work:
+
+- [Tran97/orb_slam3_ros_docker](https://github.com/Tran97/orb_slam3_ros_docker): For inspiring the implementation of RealSense to map-to-world transforms.
+
+- [thien94/orb_slam3_ros](https://github.com/thien94/orb_slam3_ros): For serving as a foundation for to publish ORB-SLAM3 features into a ROS 2.
+
+- [doeswork/EASY-ORB-SLAM3](https://github.com/doeswork/EASY-ORB-SLAM3/tree/master/src/orbslam3_ros2): For providing a key foundation for the ROS 2 ORB-SLAM3 wrapper.
+
+Their contributions were instrumental in shaping this project, allowing me to build upon their work to create a robust ROS 2 integration for ORB-SLAM3.
 
 ### **Prerequisites**
 - Ensure the ROS 2 topics `/stereo/left/rectified_images` and `/stereo/right/rectified_images` are published using the **stereo_camera_pipeline** package.
@@ -51,8 +61,6 @@ To launch:
 ```sh
 ros2 launch orbslam3 kitti_demo.launch.py 
 ```
-
-
 #### **For Intel RealSense D435 (RGB-D Mode)**
 
 ```sh
@@ -246,7 +254,11 @@ This project includes three main executable components:
    ```
 
 2. ### **Pointcloud to Occupancy Node**  
+
+   #### **Overview**
    Converts pointcloud data from ORB-SLAM3 (received via the pointcloud channel) into an occupancy grid map. 
+
+   This ROS 2 package converts sensor_msgs/PointCloud2 LIDAR data to nav_msgs/OccupancyGrid 2D map data based on height, inspired by the work of [Lucasmogsan/pointcloud_to_grid](https://github.com/Lucasmogsan/pointcloud_to_grid) which served as a foundation for this ROS 2 adaptation.
 
    To launch, run 
    ```sh
@@ -267,14 +279,4 @@ This project includes three main executable components:
    ```
 
 
-## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;">ROS2 Bag Record Misc Stuff</h2>
-
-### **Record stereo (w/ realsense)**
-```sh
-ros2 bag record -o my_house_stereo /orb_slam3/all_points /orb_slam3/kf_markers /orb_slam3/kf_markers_array /orb_slam3/tracked_points /orb_slam3/tracking_image /orb_slam3_ros/trajectory /camera/camera/infra1/image_rect_raw /camera/camera/infra2/image_rect_raw 
-```
-### **Record rgbd (w/ realsense)**
-```sh
-ros2 bag record -o my_house_rgbd /orb_slam3/all_points /orb_slam3/kf_markers /orb_slam3/kf_markers_array /orb_slam3/tracked_points /orb_slam3/tracking_image /orb_slam3_ros/trajectory /camera/camera/color/image_raw /camera/camera/aligned_depth_to_color/image_raw
-```
 
