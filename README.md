@@ -49,12 +49,12 @@ Tutorial to calibrate [here](./camera/camera_calibration/README.md)
 
 
 ## Mapping
-[ ] Come out with the steps to perform mapping
+[  ] Come out with the steps to perform mapping
 
-[ ] See if I need to think about merging the old pgm maps and stuff to create a bigger occu map
+[  ] See if I need to think about merging the old pgm maps and stuff to create a bigger occu map
 
 ## Navigation 
-[ ] Come out with the steps to perform navigation 
+[  ] Come out with the steps to perform navigation 
 
 
 ## List of ros2 packages used in the project
