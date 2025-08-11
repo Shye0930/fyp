@@ -12,9 +12,9 @@
 ## Pre-requisites installation guide
 1. The comprehensive guide for installing all necessary pre-requisites is available [here](./assets/Installation_guide.md)
 
-2. KITTI Dataset (Optional)
+2. KITTI Dataset (Use for testing)
     
-- Download the dataset (grayscale images) from http://www.cvlibs.net/datasets/kitti/eval_odometry.php
+- Download the dataset (grayscale images) from [here](http://www.cvlibs.net/datasets/kitti/eval_odometry.php)
 
 - Execute the following command. Change KITTIX.yaml by KITTI00-02.yaml, KITTI03.yaml or KITTI04-12.yaml for sequence 0 to 2, 3, and 4 to 12 respectively. Change PATH_TO_DATASET_FOLDER to the uncompressed dataset folder. Change SEQUENCE_NUMBER to 00, 01, 02,.., 11.
 
@@ -45,7 +45,7 @@ Refer to the calibration tutorial located at:
 │   └── **camera_calibration**
 ```
 
-Tutorial to calibrate [here](./camera/camera_calibration/README.md) 
+**Tutorial to calibrate [here](./camera/camera_calibration/README.md)**
 
 
 ## Mapping
@@ -61,12 +61,12 @@ Tutorial to calibrate [here](./camera/camera_calibration/README.md)
 Below is a comprehensive list of the ROS 2 packages integrated into this project. Each package is linked to its respective section for detailed setup and execution instructions.
 
 - [Stereo Camera Pipeline](./assets/project_components.md#stereo-camera-pipeline): Processes and publishes rectified stereo images for downstream applications.
-- [ORB-SLAM3 ROS](#running-orb-slam-3-via-ros2): Implements the ORB-SLAM3 with a ros wrapper to publish point cloud, camera pose and etc.
-- [Stereo Obstacle Detector](#running-stereo-obstacle-detector): Detects obstacles using stereo vision data for obstacle avoidance purposes.
-- [Image Masker](#image-masker): Applies segmentation-based masking to stereo images using YOLO models.
-- [Navigational Speaker](#navigational-speaker): Converts text to speech for navigational audio feedback.
-- ~~[Pointcloud to Grid](#pointcloud-to-grid): Converts point cloud data into 2D occupancy grids for mapping and navigation.~~ (Package not in used cause it requires lidar to calculate intensity)
-- [Envision Pointcloud to Grid](#envision-pointcloud-to-grid): Converts point cloud data into 2D occupancy grids for mapping, goal mapping and navigation. 
+- [ORB-SLAM3 ROS](./assets/project_components.md#running-orb-slam-3-via-ros2): Implements the ORB-SLAM3 with a ros wrapper to publish point cloud, camera pose and etc.
+- [Stereo Obstacle Detector](./assets/project_components.md#running-stereo-obstacle-detector): Detects obstacles using stereo vision data for obstacle avoidance purposes.
+- [Image Masker](./assets/project_components.md#image-masker): Applies segmentation-based masking to stereo images using YOLO models.
+- [Navigational Speaker](./assets/project_components.md#navigational-speaker): Converts text to speech for navigational audio feedback.
+- ~~[Pointcloud to Grid](./assets/project_components.md#pointcloud-to-grid): Converts point cloud data into 2D occupancy grids for mapping and navigation.~~ (Package not in used cause it requires lidar to calculate intensity)
+- [Envision Pointcloud to Grid](./assets/project_components.md#envision-pointcloud-to-grid): Converts point cloud data into 2D occupancy grids for mapping, goal mapping and navigation. 
 
 Explore each section for detailed configuration and usage instructions specific to each package.
 
