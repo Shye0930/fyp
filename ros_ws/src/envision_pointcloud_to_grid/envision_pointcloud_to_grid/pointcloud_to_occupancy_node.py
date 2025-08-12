@@ -231,7 +231,7 @@ class PointCloudToMap(Node):
             image[map_array == 100] = 255 # Occupied (white)
             
             # Flip vertically to match ROS map convention (origin at bottom-left)
-            image = np.flipud(np.fliplr(image))  # Flip vertically and horizontally
+            image = np.flipud(image)  # Flip vertically and horizontally
             
             # Save .pgm file
             pgm_path = self.map_save_path + '.pgm'

@@ -159,7 +159,7 @@ class NavigationNode(Node):
             return False
 
         # Flip image to match ROS convention (origin at bottom-left)
-        map_image = np.flipud(map_image)
+        map_image = np.flipud(map_image) 
 
         # Pad or crop to match grid size
         if map_image.shape[1] != self.grid_width or map_image.shape[0] != self.grid_height:
