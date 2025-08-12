@@ -9,20 +9,20 @@ def generate_launch_description():
             name='navigation_node',
             output='screen',
             parameters=[
-                {'start_x': -1.0},
-                {'start_y': -0.6},
-                {'is_camera_pose_available': False},
-                {'goal_x': 4.0},
-                {'goal_y': 1.0},
+                {'start_x': 0.5},
+                {'start_y': 0.3},
+                {'is_camera_pose_available': True},
+                {'goal_x':  -5.0},
+                {'goal_y': 15.3},
                 {'goal_yaw': 90.0},
                 {'goal_radius': 1},
                 {'pose_topic': '/orb_slam3/camera_pose'},
                 {'goal_frame': 'world'},
                 {'grid_resolution': 0.1},  # meters per cell
-                {'grid_width': 100},       # cells
-                {'grid_height': 100},      # cells
-                {'map_path': '~/Desktop/fyp/maps/rosbag/rgbd/occu_map'},
-                {'path_save_path': '~/Desktop/fyp/maps/rosbag/rgbd/path.json'},
+                {'grid_width': 500},       # cells
+                {'grid_height': 500},      # cells
+                {'map_path': '/home/shye0930/Desktop/fyp/maps/hesl/occu_map'},
+                {'path_save_path': '/home/shye0930/Desktop/fyp/maps/hesl/path.json'},
             ]
     )
 

@@ -179,9 +179,12 @@ class NavigationNode(Node):
         # Normalize map values to ROS OccupancyGrid convention
         # 0 = free, 205 = unknown, 255 = occupied
         normalized_data = np.zeros_like(map_image, dtype=np.int8)
-        normalized_data[map_image == 0] = 0    # Free space
-        normalized_data[map_image == 205] = -1  # Unknown (free floor)
-        normalized_data[map_image == 255] = 100 # Occupied (walls)
+        # normalized_data[map_image == 0] = 0    # Free space
+        # normalized_data[map_image == 205] = -1  # Unknown (free floor)
+        # normalized_data[map_image == 255] = 100 # Occupied (walls)
+        normalized_data[map_image >= 1] = -1
+        normalized_data[map_image < 1] = 100
+
         # Clamp any other values to [-1, 100] to fit the range
         normalized_data = np.clip(normalized_data, -1, 100)
 
@@ -218,8 +221,8 @@ class NavigationNode(Node):
     def is_occupied(self, grid_x, grid_y):
         """Check if a grid cell is occupied, considering user size (0.5m x 0.5m) and 0.1m gap."""
         # User size: 0.5m x 0.5m, safety gap: 0.1m
-        user_size_m = 0.3  # User width and height in meters
-        safety_gap_m = 0.05 # Safety gap in meters
+        user_size_m = 0.5  # User width and height in meters
+        safety_gap_m = 0.1 # Safety gap in meters
         user_cells = int(user_size_m / self.grid_resolution)  # Number of cells for 0.5m
         safety_cells = int(safety_gap_m / self.grid_resolution)  # Number of cells for 0.1m
         half_user_cells = user_cells // 2  # Half the user's footprint for centering

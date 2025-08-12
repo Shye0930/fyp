@@ -49,12 +49,68 @@ Refer to the calibration tutorial located at:
 
 
 ## Mapping
-- [ ] Come out with the steps to perform mapping
+- [ ] **Come out with the steps to perform mapping**
+- [ ] **See if I need to think about merging the old pgm maps and stuff to create a bigger occu map**
 
-- [ ] See if I need to think about merging the old pgm maps and stuff to create a bigger occu map
+#### **For Intel RealSense D435 (RGB-D Mode)**
+
+```sh
+# For Intel RealSense D435, run for RGB-D
+ros2 launch realsense2_camera rs_launch.py enable_color:=true enable_depth:=true enable_infra1:=false enable_infra2:=false align_depth.enable:=true enable_sync:=true rgb_camera.color_profile:=640x480x30 depth_module.depth_profile:=640x480x30
+
+# Enable IR emitter
+ros2 param set /camera/camera depth_module.emitter_enabled 1
+
+ros2 launch orbslam3 d435_rgbd.launch.py
+```
+
+#### **For Intel RealSense D435 (Stereo Mode)**
+
+```sh
+ros2 launch realsense2_camera rs_launch.py enable_color:=false enable_depth:=false enable_infra1:=true enable_infra2:=true depth_module.infra_profile:=640x480x30 
+
+# Disable IR emitter
+ros2 param set /camera/camera depth_module.emitter_enabled 0
+
+
+ros2 launch orbslam3 d435_stereo.launch.py
+```
+
+#### **For ESP32 (Stereo Mode)**
+
+```sh
+# Publish the stereo channel from ESP32
+ros2 launch stereo_camera_pipeline stereo_pipeline.launch.py
+
+ros2 launch orbslam3 esp32_stereo.launch.py
+```
+
+#### **Occupancy map generator**
+```sh
+ros2 launch envision_pointcloud_to_grid  create_occupancy_node.launch.py
+```
+
+#### **Save the map**
+```sh
+# Save orb slam map as osa
+ros2 service call /orb_slam3/save_map envision_interfaces/srv/SaveMap "{name: ''}"
+
+# Save the keyframe and traj
+ros2 service call /orb_slam3/save_traj envision_interfaces/srv/SaveMap "{name: ''}"
+
+# The generated map is saved as a PGM file using the following service call:
+ros2 service call /pointcloud/save_map std_srvs/srv/Trigger
+```
+
+
+
 
 ## Navigation 
 - [ ] Come out with the steps to perform navigation 
+
+```sh
+   ros2 launch envision_pointcloud_to_grid navigation.launch.py
+```
 
 
 ## List of ros2 packages used in the project
