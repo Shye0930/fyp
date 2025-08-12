@@ -15,7 +15,7 @@ def generate_launch_description():
                 {'goal_x':  -5.0},
                 {'goal_y': 15.3},
                 {'goal_yaw': 90.0},
-                {'goal_radius': 1},
+                {'goal_radius': 5},
                 {'pose_topic': '/orb_slam3/camera_pose'},
                 {'goal_frame': 'world'},
                 {'grid_resolution': 0.1},  # meters per cell

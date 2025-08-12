@@ -71,4 +71,4 @@ Viewer.ViewpointZ: -3.5
 Viewer.ViewpointF: 500.0
 
 
-# System.LoadAtlasFromFile: "maps/rosbag/rgbd/rgbd_house"
+# System.LoadAtlasFromFile: "hesl_rgbd"

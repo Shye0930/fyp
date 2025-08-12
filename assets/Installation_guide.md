@@ -64,6 +64,7 @@ For Ubuntu 20.04 with LTS kernel (< 5.13):
 
 ### Build and Install librealsense
 ```bash
+mkdir build && cd build
 cmake ../ -DCMAKE_BUILD_TYPE=Release
 make
 sudo make -j$(($(nproc)-1)) install
@@ -227,8 +228,8 @@ git clone --branch 4.56.3 https://github.com/IntelRealSense/realsense-ros.git
 cd ~/ros2_ws
 sudo apt-get install python3-rosdep -y
 rm -rf ~/.ros/rosdep/sources.cache
-sudo rosdep init
-rosdep update
+sudo rosdep init # "sudo rosdep init --include-eol-distros" for Foxy and earlier
+rosdep update # "sudo rosdep update --include-eol-distros" for Foxy and earlier
 rosdep install -i --from-path src --rosdistro $ROS_DISTRO --skip-keys=librealsense2 -y
 sudo apt install ros-foxy-diagnostic-updater
 colcon build

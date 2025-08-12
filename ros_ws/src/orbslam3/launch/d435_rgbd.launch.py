@@ -68,8 +68,27 @@ def generate_launch_description():
         ]
     )
 
+    camera_pose_transform_node = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='world_orb_to_world',
+        output='screen',
+        arguments=[
+            '0', '0', '0',                 # x, y, z translation
+            '0', '0', '0.7071068', '0.7071068',      # quaternion (x, y, z, w) for 90-degree rotation
+            '/world',                          # parent frame_id
+            '/map'                       # child frame_id
+        ],
+        parameters=[
+            {'frequency': 100.0}
+        ]
+    )
+
+
+
     return LaunchDescription([
         world_transform_node,
+        camera_pose_transform_node,
         vocab_file_arg,
         settings_file_arg,
         orb_slam3_node,
