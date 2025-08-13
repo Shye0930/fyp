@@ -6,6 +6,9 @@ ros_ws/build/
 ros_ws/install/
 ros_ws/log/
 
+# Ignore micro ros folder
+uros_ws/
+
 # Ignore binaries and intermediate files
 *.bin
 *.o
