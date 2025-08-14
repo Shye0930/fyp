@@ -31,7 +31,7 @@ def generate_launch_description():
             
             # --- Your new parameters for focal length and baseline ---
             {'focal_length': 384.595}, #Ex-esp32 : 485.9461
-            {'baseline': 0.078453409},
+            {'baseline': 0.0499187}, # Ex-esp32:  0.078453409
 
 
              # Backup

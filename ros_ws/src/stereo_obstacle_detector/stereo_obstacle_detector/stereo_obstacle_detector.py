@@ -5,6 +5,8 @@ from sensor_msgs.msg import Image, CameraInfo
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
+from std_msgs.msg import Bool  # Import for boolean message
+
 
 # Assuming envision_interfaces.msg.ObstacleStatus is defined
 from envision_interfaces.msg import ObstacleStatus
@@ -63,6 +65,8 @@ class StereoObstacleDetector(Node):
         self.disparity_pub = self.create_publisher(Image, 'disparity_map', 10)
         self.depth_pub = self.create_publisher(Image, 'depth_map', 10) # Publishing as sensor_msgs/Image (float32)
         self.obstacle_status_pub = self.create_publisher(ObstacleStatus, 'obstacle_status', 10)
+        self.obstacle_bool_pub = self.create_publisher(Bool, 'obstacle_detected', 10)  # New publisher for boolean
+
 
         self.bridge = CvBridge()
 
@@ -184,6 +188,11 @@ class StereoObstacleDetector(Node):
             status_msg.obstacle_detected = obstacle_detected
             status_msg.min_distance = float(min_depth_in_roi)
             self.obstacle_status_pub.publish(status_msg)
+
+            # Publish boolean obstacle detection
+            bool_msg = Bool()
+            bool_msg.data = obstacle_detected
+            self.obstacle_bool_pub.publish(bool_msg)
 
         else:
             self.get_logger().warn("Focal length or baseline is zero or not set, cannot compute depth.")
