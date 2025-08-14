@@ -228,14 +228,53 @@ git clone --branch 4.56.3 https://github.com/IntelRealSense/realsense-ros.git
 cd ~/ros2_ws
 sudo apt-get install python3-rosdep -y
 rm -rf ~/.ros/rosdep/sources.cache
-sudo rosdep init # "sudo rosdep init --include-eol-distros" for Foxy and earlier
-rosdep update # "sudo rosdep update --include-eol-distros" for Foxy and earlier
+sudo rosdep init  --include-eol-distros #for Foxy and earlier
+rosdep update --include-eol-distros #for Foxy and earlier
 rosdep install -i --from-path src --rosdistro $ROS_DISTRO --skip-keys=librealsense2 -y
 sudo apt install ros-foxy-diagnostic-updater
 colcon build
 echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
 ```
 
+### Installing Micro Ros
+
+```bash
+cd ~/Desktop/fyp
+mkdir uros_ws && cd uros_ws
+git clone -b $ROS_DISTRO https://github.com/micro-ROS/micro_ros_setup.git src/micro_ros_setup
+sudo rosdep update --include-eol-distros && rosdep install --from-paths src --ignore-src -y
+colcon build
+echo "source ~/Desktop/fyp/uros_ws/install/local_setup.bash" >> ~/.bashrc
+source ~/.bashrc
+```
+
+#### Building micro-ROS-Agent
+
+Using this package is possible to install a ready to use micro-ROS-Agent:
+```sh
+ros2 run micro_ros_setup create_agent_ws.sh
+ros2 run micro_ros_setup build_agent.sh
+source ~/.bashrc
+```
+
+### Add the micro ros Arduino library to Arduino (Foxy)
+
+Follow these steps to add the micro-ROS library for the Foxy distribution to your Arduino IDE:
+
+1. **Download the Library**:
+   - Visit the micro-ROS Arduino repository: [https://github.com/micro-ROS/micro_ros_arduino/tree/foxy](https://github.com/micro-ROS/micro_ros_arduino/tree/foxy).
+   -  "Download ZIP" to download the `micro_ros_arduino-foxy.zip` file.
+
+2. **Add the Library to Arduino IDE**:
+   - Open the Arduino IDE on your computer.
+   - Navigate to **Sketch > Include Library > Add .ZIP Library**.
+   - Locate and select the downloaded `micro_ros_arduino-foxy.zip` file.
+   - Click **Open** to import the library.
+
+3. **Verify Installation**:
+   - Go to **File > Examples** in the Arduino IDE.
+   - Look for the `micro_ros_arduino` section in the examples menu to confirm the library is installed correctly.
+   - You can test the library by opening one of the example sketches (e.g., `micro-ros_publisher`).
 ---
 
 ## References

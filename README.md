@@ -64,6 +64,8 @@ ros2 param set /camera/camera depth_module.emitter_enabled 1
 ros2 launch orbslam3 d435_rgbd.launch.py
 ```
 
+![realsense rgbd terminal](assets/img/realsense_rgbd_terminal.png)
+
 #### **For Intel RealSense D435 (Stereo Mode)**
 
 ```sh
@@ -75,6 +77,7 @@ ros2 param set /camera/camera depth_module.emitter_enabled 0
 
 ros2 launch orbslam3 d435_stereo.launch.py
 ```
+![realsense stereo terminal](assets/img/realsense_stereo_terminal.png)
 
 #### **For ESP32 (Stereo Mode)**
 
@@ -84,6 +87,8 @@ ros2 launch stereo_camera_pipeline stereo_pipeline.launch.py
 
 ros2 launch orbslam3 esp32_stereo.launch.py
 ```
+
+![esp32 stereo terminal](assets/img/esp32_stereo_terminal.png)
 
 #### **Occupancy map generator**
 ```sh
@@ -102,15 +107,34 @@ ros2 service call /orb_slam3/save_traj envision_interfaces/srv/SaveMap "{name: '
 ros2 service call /pointcloud/save_map std_srvs/srv/Trigger
 ```
 
+#### Example of the command to launch for mapping
+
+![example terminal for mapping](assets/img/example_terminal_mapping.png)
 
 
 
 ## Navigation 
-- [ ] Come out with the steps to perform navigation 
+- [ ] Come out COMMANDS FOR NETWORK MICRO ROS  
+
+
+### For serial micro ros
 
 ```sh
-   ros2 launch envision_pointcloud_to_grid navigation.launch.py
+
+# Terminal 1 
+ros2 launch envision_pointcloud_to_grid navigation.launch.py
+
+# Terminal 2
+ros2 launch stereo_obstacle_detector stereo_detector.launch.py 
+
+# Terminal 3
+ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0 
 ```
+
+![navigation terminal serial](assets/img/navigation_serial_terminal.png)
+
+
+
 
 
 ## List of ros2 packages used in the project
