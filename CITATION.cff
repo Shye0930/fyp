@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Hong"
+  given-names: "Sheng Yang"
+  orcid: ""
+title: "Smart Navigation Device for the Visually Impaired"
+version: 1.0
+doi: nil
+date-released: nil
+url: "https://github.com/Shye0930/fyp"
