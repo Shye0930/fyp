@@ -116,25 +116,38 @@ ros2 service call /pointcloud/save_map std_srvs/srv/Trigger
 ## Navigation 
 - [ ] Come out COMMANDS FOR NETWORK MICRO ROS  
 
-
-### For serial micro ros
-
 ```sh
-
 # Terminal 1 
 ros2 launch envision_pointcloud_to_grid navigation.launch.py
 
 # Terminal 2
 ros2 launch stereo_obstacle_detector stereo_detector.launch.py 
+```
 
-# Terminal 3
+
+### micro ros
+
+```sh
+# Serial
 ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0 
+
+# UDP network
+ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888 
 ```
 
 ![navigation terminal serial](assets/img/navigation_serial_terminal.png)
 
 
+## TODO:
+- [ ] Use pyttsx3 for text to speech (navigation)
 
+```python
+import pyttsx3
+engine = pyttsx3.init()
+engine.setProperty("rate", 150)
+engine.say("I will speak this text")
+engine.runAndWait()
+```
 
 
 ## List of ros2 packages used in the project
