@@ -281,6 +281,7 @@ static esp_err_t stream_handler(httpd_req_t *req) {
     int64_t fr_end = esp_timer_get_time();
 
     int64_t frame_time = fr_end - last_frame;
+
     last_frame = fr_end;
 
     frame_time /= 1000;
@@ -396,9 +397,9 @@ static esp_err_t cmd_handler(httpd_req_t *req) {
 #if CONFIG_LED_ILLUMINATOR_ENABLED
   else if (!strcmp(variable, "led_intensity")) {
     led_duty = val;
-    //if (isStreaming) {
+    // if (isStreaming) {
       enable_led(true);
-    //}
+    // }
   }
 #endif
   else {
@@ -672,6 +673,7 @@ static esp_err_t index_handler(httpd_req_t *req) {
 
 void startCameraServer() {
   httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+  config.server_port = 80; // Change port here
   config.max_uri_handlers = 16;
 
   httpd_uri_t index_uri = {
