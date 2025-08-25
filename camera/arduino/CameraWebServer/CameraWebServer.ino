@@ -29,7 +29,7 @@
 // Enter your WiFi credentials
 // ===========================
 const char *ssid = "fyp";
-const char *password = "ad28kxcp";
+const char *password = "";
 
 framesize_t current_cam_framesize;
 int current_cam_quality;
