@@ -12,6 +12,7 @@ def generate_launch_description():
                 {'start_x': 0.5},
                 {'start_y': 0.3},
                 {'is_camera_pose_available': False},
+                {'current_direction': 1},
                 {'goal_x':  -5.0},
                 {'goal_y': 15.3},
                 {'goal_yaw': 90.0},

@@ -26,6 +26,7 @@ class NavigationNode(Node):
         self.declare_parameter('is_camera_pose_available', False)
         self.declare_parameter('goal_x', 5.0)
         self.declare_parameter('goal_y', 3.0)
+        self.declare_parameter('current_direction', 1)
         self.declare_parameter('goal_yaw', 90.0)  # Degrees
         self.declare_parameter('pose_topic', '/orb_slam3/camera_pose')
         self.declare_parameter('goal_frame', 'map')
@@ -51,7 +52,7 @@ class NavigationNode(Node):
         self.grid_height = self.get_parameter('grid_height').value
         self.goal_radius = self.get_parameter('goal_radius').value
         self.path_save_path = os.path.expanduser(self.get_parameter('path_save_path').value)
-        
+        self.current_direction = self.get_parameter('current_direction').value  # 0: east, 1: north, 2: west, 3: south (in radians: 0, pi/2, pi, 3pi/2)
 
         # Debug flag:
         self.is_goal_publish_flag_non_spam = True
@@ -64,7 +65,7 @@ class NavigationNode(Node):
         self.occupancy_grid = None
         self.path = None
         self.path_calculated = False
-        self.current_direction = 0  # 0: east, 1: north, 2: west, 3: south (in radians: 0, pi/2, pi, 3pi/2)
+        
 
         # Publishers and Subscribers
         self.path_publisher = self.create_publisher(Path, '/planned_path', 10)
@@ -290,7 +291,7 @@ class NavigationNode(Node):
         cost_so_far = {start_state: 0}
 
         while frontier:
-            self.get_logger().info("In frontier....")
+            # self.get_logger().info("In frontier....")
             _, current = heapq.heappop(frontier)
             current_x, current_y, current_dir = current
 
@@ -403,11 +404,11 @@ class NavigationNode(Node):
                 turn = (seg_dir - current_dir) % 4
                 instruction = ''
                 if turn == 1:
-                    self.get_logger().info('Turn right')
-                    instruction += 'Turn right\n'
-                elif turn == 3:
                     self.get_logger().info('Turn left')
                     instruction += 'Turn left\n'
+                elif turn == 3:
+                    self.get_logger().info('Turn right')
+                    instruction += 'Turn right\n'
                 elif turn == 2:
                     self.get_logger().info('Turn around')
                     instruction += 'Turn around\n'
