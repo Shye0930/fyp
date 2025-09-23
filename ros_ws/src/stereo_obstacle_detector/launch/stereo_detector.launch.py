@@ -18,9 +18,9 @@ def generate_launch_description():
             # Default SGBM parameters (optional, can be omitted if defaults in code are fine)
             {'min_disparity': 0},
             {'num_disparities': 64},# was 64 (must be factor of 16)
-            {'block_size': 5}, 
+            {'block_size': 10}, 
             {'disp12_max_diff': 1}, # was 1 
-            {'uniqueness_ratio': 10}, # was 10,13
+            {'uniqueness_ratio': 1}, # was 10,13
             {'speckle_window_size': 100},
             {'speckle_range': 1},
             {'left_topic': '/camera/camera/infra1/image_rect_raw'},
