@@ -13,22 +13,22 @@
 // ===================
 // Select camera model
 // ===================
-#define CAMERA_MODEL_AI_THINKER  // Has PSRAM
+#define CAMERA_MODEL_AI_THINKER // Has PSRAM
 #include "camera_pins.h"
 
 
 // Manual Exposure/Gain/Brightness values - TUNE THESE CAREFULLY!
-#define MANUAL_AEC_VALUE 600  // Range 0-1200. Experiment with this heavily!
-#define MANUAL_AGC_GAIN 1     // Range 0-30. 0 is lowest gain (least noisy). Experiment.
-#define BRIGHTNESS_VALUE 0    // Range -2 to 2. 0 is normal.
-#define CONTRAST_VALUE 0      // Range -2 to 2. 0 is normal.
-#define SATURATION_VALUE 0    // Range -2 to 2. 0 is normal (will be irrelevant for grayscale, but good to set).
+#define MANUAL_AEC_VALUE 600 // Range 0-1200. Experiment with this heavily!
+#define MANUAL_AGC_GAIN 1   // Range 0-30. 0 is lowest gain (least noisy). Experiment.
+#define BRIGHTNESS_VALUE 0  // Range -2 to 2. 0 is normal.
+#define CONTRAST_VALUE 0    // Range -2 to 2. 0 is normal.
+#define SATURATION_VALUE 0  // Range -2 to 2. 0 is normal (will be irrelevant for grayscale, but good to set).
 
 
 // ===========================
 // Enter your WiFi credentials
 // ===========================
-const char *ssid = "";
+const char *ssid = "fyp";
 const char *password = "";
 
 framesize_t current_cam_framesize;
@@ -62,17 +62,17 @@ void setup() {
   config.pin_sscb_scl = SIOC_GPIO_NUM;
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
-  config.xclk_freq_hz = 24000000;  //24000000;
+  config.xclk_freq_hz = 20000000;//24000000;
   config.pixel_format = PIXFORMAT_JPEG;
   config.fb_count = 2;
 
 
-  current_cam_framesize = FRAMESIZE_HVGA;
-  current_cam_quality = 20;  //10-63 lower number means higher quality
-  current_cam_gain = (gainceiling_t)0;
+  current_cam_framesize = FRAMESIZE_QVGA;
+  current_cam_quality = 20; //10-63 lower number means higher quality
+  current_cam_gain = (gainceiling_t) 0;
 
   config.frame_size = current_cam_framesize;
-  config.jpeg_quality = current_cam_quality;
+  config.jpeg_quality = current_cam_quality; 
   config.grab_mode = CAMERA_GRAB_LATEST;
 
   // if PSRAM IC present, init with UXGA resolution and higher JPEG quality
@@ -83,12 +83,12 @@ void setup() {
   //     config.fb_count = 2;
   //     config.grab_mode = CAMERA_GRAB_LATEST;
   //   } else {
-
+      
   //     // Limit the frame size when PSRAM is not available
   //     config.frame_size = FRAMESIZE_SVGA;
   //     config.fb_location = CAMERA_FB_IN_DRAM;
   //   }
-  // }
+  // } 
 
 #if defined(CAMERA_MODEL_ESP_EYE)
   pinMode(13, INPUT_PULLUP);
@@ -102,37 +102,38 @@ void setup() {
     return;
   }
 
-
+  
   sensor_t *s = esp_camera_sensor_get();
   // initial sensors are flipped vertically and colors are a bit saturated
 
-  if (s->id.PID == OV2640_PID) {
+  if(s->id.PID == OV2640_PID){
     // s->xclk_freq_hz = 24000000;
     // s->set_xclk(s, LEDC_TIMER_0, 24000000);
-    s->set_vflip(s, 1);  // flip it back
-    s->set_hmirror(s, 1);
-    s->set_dcw(s, 1);  // Digital Crop Window.
+    s->set_vflip(s, 1);        // flip it back
+    s->set_hmirror(s,1);
+    s->set_dcw(s, 1);           // Digital Crop Window. 
 
-    // s->set_whitebal(s, 0);  // 0 = disable, 1 = enable
-    // s->set_awb_gain(s, 0);  // AWB gain control. Disable this too.
+    s->set_whitebal(s, 0);      // 0 = disable, 1 = enable
+    s->set_awb_gain(s, 0);      // AWB gain control. Disable this too.
 
-    // s->set_raw_gma(s, 1);  // Allow raw gamma
+    s->set_raw_gma(s,1);        // Allow raw gamma 
 
-    // s->set_bpc(s, 0);
+    s->set_bpc(s,0);
 
-    // s->set_exposure_ctrl(s, 1);  // 0 = disable, 1 = enable
-    // s->set_aec2(s, 1);
-    // s->set_ae_level(s, 0);
+    s->set_exposure_ctrl(s, 1); // 0 = disable, 1 = enable
+    s->set_aec2(s,1);
+    s->set_ae_level(s,0);
 
-    // s->set_gainceiling(s, current_cam_gain);  // Set a low gain ceiling even if AGC is off, to prevent excessive noise if somehow enabled.
-    // s->set_gain_ctrl(s, 0);                   // 0 = disable, 1 = enable
-    // s->set_agc_gain(s, MANUAL_AGC_GAIN);      // Set manual gain value when AGC is off.
+    s->set_gainceiling(s, current_cam_gain); // Set a low gain ceiling even if AGC is off, to prevent excessive noise if somehow enabled.
+    s->set_gain_ctrl(s, 0);     // 0 = disable, 1 = enable
+    s->set_agc_gain(s, MANUAL_AGC_GAIN); // Set manual gain value when AGC is off.
 
-    // // 4. Other image enhancements/auto adjustments
-    // s->set_brightness(s, BRIGHTNESS_VALUE);  // -2 to 2
-    // s->set_contrast(s, CONTRAST_VALUE);      // -2 to 2
-    // s->set_saturation(s, SATURATION_VALUE);  // -2 to 2 (Irrelevant for grayscale, but good for completeness)
-    s->set_special_effect(s, 2);             // grayscale
+    // 4. Other image enhancements/auto adjustments
+    s->set_brightness(s, BRIGHTNESS_VALUE); // -2 to 2
+    s->set_contrast(s, CONTRAST_VALUE);     // -2 to 2
+    s->set_saturation(s, SATURATION_VALUE); // -2 to 2 (Irrelevant for grayscale, but good for completeness)
+    s->set_special_effect(s, 2); // grayscale
+
   }
 
 // Setup LED FLash if LED pin is defined in camera_pins.h
@@ -140,7 +141,7 @@ void setup() {
   setupLedFlash(LED_GPIO_NUM);
 #endif
 
-  Serial.printf("xclk freq is %d Mhz \n", s->xclk_freq_hz / 1000000);
+  Serial.printf("xclk freq is %d Mhz \n", s->xclk_freq_hz/1000000);
 
   WiFi.begin(ssid, password);
   WiFi.setSleep(false);
@@ -153,7 +154,7 @@ void setup() {
   Serial.println("");
   Serial.println("WiFi connected");
 
-  if (psramFound()) {
+  if(psramFound()){
     Serial.println("PSRAM available");
   }
 
@@ -279,7 +280,7 @@ void loop() {
 //     return;
 //   }
 
-
+  
 //   sensor_t *s = esp_camera_sensor_get();
 //   // initial sensors are flipped vertically and colors are a bit saturated
 
@@ -339,4 +340,3 @@ void loop() {
 //   // // Do nothing. Everything is done in another task by the web server
 //   delay(10000);
 // }
-
