@@ -50,8 +50,25 @@ def generate_launch_description():
         output='screen',
         arguments=['-d', rviz_config_path]
     )
+    
+    world_transform_node = Node(
+    package='tf2_ros',
+    executable='static_transform_publisher',
+    name='world_orb_to_world',
+    output='screen',
+    arguments=[
+        '0', '0', '1.0',                 # x, y, z translation (no translation)
+        '0', '0', '0', '1',           # quaternion (x, y, z, w) for identity (no rotation)
+        '/world',                     # parent frame_id
+        '/map'                        # child frame_id
+    ],
+    parameters=[
+        {'frequency': 100.0}
+    ]
+)
 
     return LaunchDescription([
+    	world_transform_node,
         vocab_file_arg,
         settings_file_arg,
         orb_slam3_node,
