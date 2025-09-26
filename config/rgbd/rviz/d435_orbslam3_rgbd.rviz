@@ -52,18 +52,6 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        camera:
-          Value: true
-        camera_color_frame:
-          Value: true
-        camera_color_optical_frame:
-          Value: true
-        camera_depth_frame:
-          Value: true
-        camera_depth_optical_frame:
-          Value: true
-        camera_link:
-          Value: true
         map:
           Value: true
         world:
@@ -76,8 +64,7 @@ Visualization Manager:
       Tree:
         world:
           map:
-            camera:
-              {}
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -150,7 +137,7 @@ Visualization Manager:
       Enabled: true
       Name: kf markers
       Namespaces:
-        kf_markers: true
+        {}
       Topic:
         Depth: 100
         Durability Policy: Volatile
@@ -447,25 +434,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 4.154311180114746
+      Distance: 25.74956512451172
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 3.9962985515594482
-        Y: 1.393655776977539
-        Z: 6.8491973876953125
+        X: 3.838315963745117
+        Y: 0.9911601543426514
+        Z: 6.885441303253174
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5547963380813599
+      Pitch: 1.5597963333129883
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
-      Yaw: 4.72846794128418
+      Yaw: 4.728469371795654
     Saved: ~
 Window Geometry:
   Displays:

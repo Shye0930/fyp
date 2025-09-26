@@ -9,14 +9,14 @@ def generate_launch_description():
             name='navigation_node',
             output='screen',
             parameters=[
-                {'start_x': 0.5},
-                {'start_y': 0.3},
+                {'start_x': 0.5}, #0.5
+                {'start_y': 0.3}, #0.3
                 {'is_camera_pose_available': True},
                 {'current_direction': 1},
-                {'goal_x':  -5.0},
+                {'goal_x':  -2.5},
                 {'goal_y': 15.3},
                 {'goal_yaw': 90.0},
-                {'goal_radius': 2},
+                {'goal_radius': 5},
                 {'pose_topic': '/orb_slam3/camera_pose'},
                 {'goal_frame': 'world'},
                 {'grid_resolution': 0.1},  # meters per cell
