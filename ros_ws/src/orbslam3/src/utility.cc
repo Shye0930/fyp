@@ -124,7 +124,7 @@ void publish_topics(ORB_SLAM3::System* pSLAM_instance,const rclcpp::Time &msg_ti
     // Common topics
     publish_camera_pose(pSLAM_instance,world_frame_id,Twc, msg_time);
     publish_tf_transform(pSLAM_instance,Twc, world_frame_id, cam_frame_id, msg_time);
-
+    
     publish_tracking_img(pSLAM_instance,world_frame_id,pSLAM_instance->GetCurrentFrame(), msg_time);
 
     publish_keypoints(pSLAM_instance,world_frame_id,pSLAM_instance->GetTrackedMapPoints(), pSLAM_instance->GetTrackedKeyPoints(), msg_time);
@@ -204,8 +204,24 @@ void publish_camera_pose(ORB_SLAM3::System* pSLAM_instance,const std::string wor
     pose_msg.pose.position.y = Tcw_SE3f.translation().y();
     pose_msg.pose.position.z = Tcw_SE3f.translation().z();
 
-    // Orientation
+    // // Orientation
+    // Eigen::Quaternionf q = Tcw_SE3f.unit_quaternion();
+    // pose_msg.pose.orientation.x = q.x();
+    // pose_msg.pose.orientation.y = q.y();
+    // pose_msg.pose.orientation.z = q.z();
+    // pose_msg.pose.orientation.w = q.w();
+
+    // Orientation with additional 90 degrees anti-clockwise rotation around Z-axis in camera frame
     Eigen::Quaternionf q = Tcw_SE3f.unit_quaternion();
+
+    // Define the additional rotation (positive angle for anti-clockwise by right-hand rule)
+    float pi = 3.141592653589793f;
+    Eigen::AngleAxisf rotation_angle(-pi / 2.0f, Eigen::Vector3f::UnitY());
+    Eigen::Quaternionf r(rotation_angle);
+
+    // Apply the rotation in camera frame
+    q = q * r;
+
     pose_msg.pose.orientation.x = q.x();
     pose_msg.pose.orientation.y = q.y();
     pose_msg.pose.orientation.z = q.z();

@@ -16,9 +16,9 @@ def generate_launch_description():
                 {'grid_width': 500}, # cells
                 {'grid_height': 500},# cells
                 {'height_min': 0.5},
-                {'height_max': 1.5},
+                {'height_max': 1.0}, # 1.5
                 {'min_points_per_cell': 5},  # Minimum points to mark cell as occupied
-                {'map_save_path': '/home/shye0930/Desktop/fyp/maps/hesl/occu_map'},
+                {'map_save_path': '/home/shye0930/Desktop/fyp/maps/hesl_stereo/occu_map'},
             ]
         ),
     ])

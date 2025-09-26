@@ -15,6 +15,9 @@ from geometry_msgs.msg import Pose, Point, Quaternion
 import math
 import tf2_ros
 import heapq
+import pyttsx3
+
+from scipy.spatial.transform import Rotation as R
 
 class NavigationNode(Node):
     def __init__(self):
@@ -404,15 +407,15 @@ class NavigationNode(Node):
                 turn = (seg_dir - current_dir) % 4
                 instruction = ''
                 if turn == 1:
-                    self.get_logger().info('Turn left')
+                    # self.get_logger().info('Turn left')
                     instruction += 'Turn left\n'
                 elif turn == 3:
-                    self.get_logger().info('Turn right')
+                    # self.get_logger().info('Turn right')
                     instruction += 'Turn right\n'
                 elif turn == 2:
-                    self.get_logger().info('Turn around')
+                    # self.get_logger().info('Turn around')
                     instruction += 'Turn around\n'
-                self.get_logger().info(f'Walk approximately {dist:.1f} meters')
+                # self.get_logger().info(f'Walk approximately {dist:.1f} meters')
                 instruction += f'Walk approximately {dist:.1f} meters'
                 self.segment_instructions.append(instruction)
                 current_dir = seg_dir
@@ -443,6 +446,36 @@ class NavigationNode(Node):
     def pose_callback(self, msg):
         """Handle camera pose updates and trigger path calculation."""
         self.current_pose = msg
+
+        # q_cp = [
+        #         msg.pose.orientation.x,
+        #         msg.pose.orientation.y,
+        #         msg.pose.orientation.z,
+        #         msg.pose.orientation.w,
+        #     ]# Convert quaternion -> Rotation
+        # r = R.from_quat(q_cp)
+
+        # # Define a 90° CCW rotation about Z axis
+        # r_offset = R.from_euler("z", math.pi/2)  # radians
+
+        # # Apply the rotation: new = offset * original
+        # r_new = r_offset * r
+
+        # # Convert back to quaternion [x, y, z, w]
+        # new_q = r_new.as_quat()
+
+        # # Build new pose
+        # new_pose = PoseStamped()
+        # new_pose.header = msg.header
+        # new_pose.pose.position = position
+        # new_pose.pose.orientation.x = new_q[0]
+        # new_pose.pose.orientation.y = new_q[1]
+        # new_pose.pose.orientation.z = new_q[2]
+        # new_pose.pose.orientation.w = new_q[3]
+
+        # Store updated pose
+        # self.current_pose = new_pose
+
         if not self.path_calculated:
             if self.occupancy_grid is None:
                 if self.load_map():

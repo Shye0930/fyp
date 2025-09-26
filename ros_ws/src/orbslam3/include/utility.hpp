@@ -56,6 +56,8 @@
 #include "Map.h"
 #include "Tracking.h"
 
+#include <Eigen/Geometry>  // Ensure this is included if not already (for AngleAxisf)
+
 #include <functional> // Required for std::bind
 
 class Utility
