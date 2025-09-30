@@ -23,15 +23,23 @@ def generate_launch_description():
             {'uniqueness_ratio': 1}, # was 10,13
             {'speckle_window_size': 100},
             {'speckle_range': 1},
-            {'left_topic': '/camera/camera/infra1/image_rect_raw'},
-            {'right_topic': '/camera/camera/infra2/image_rect_raw'},
+            # {'left_topic': '/camera/camera/infra1/image_rect_raw'},
+            # {'right_topic': '/camera/camera/infra2/image_rect_raw'},
+
+            {'left_topic': '/stereo/left/rectified_images'},
+            {'right_topic': '/stereo/right/rectified_images'},
             
             # Obstacle detection threshold
             {'obstacle_distance_threshold_m': 1.5},
             
             # --- Your new parameters for focal length and baseline ---
-            {'focal_length': 384.595}, #Ex-esp32 : 485.9461
-            {'baseline': 0.0499187}, # Ex-esp32:  0.078453409
+            # {'focal_length': 384.595}, 
+            # {'baseline': 0.0499187},
+
+            {'focal_length': 494.24103690933885}, 
+            {'baseline': 0.079302},
+
+
 
 
              # Backup
