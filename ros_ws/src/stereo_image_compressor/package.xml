@@ -4,14 +4,14 @@
   <name>stereo_image_compressor</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="Hsy30009@gmail.com">shye0930</maintainer>
+  <maintainer email="test@test.com">shye0930</maintainer>
   <license>TODO: License declaration</license>
 
   <depend>rclpy</depend>
   <depend>sensor_msgs</depend>
   <depend>cv_bridge</depend>
   <depend>message_filters</depend>
-  <depend>python3-pycuda</depend>
+  <exec_depend>python3-numpy</exec_depend>
   <depend>numpy</depend>
 
   <test_depend>ament_copyright</test_depend>

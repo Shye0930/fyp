@@ -14,7 +14,7 @@ def generate_launch_description():
         Node(
             package='stereo_image_compressor',
             executable='decompressor',
-            name='stereo_image_decompressor',
+            name='stereo_image_compressor',
             output='screen',
             parameters=[{
                 'input_topic': LaunchConfiguration('input_topic'),
