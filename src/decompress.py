@@ -53,7 +53,7 @@ class ImageDecompressor(Node):
             cv2.waitKey(1)   # required to refresh the imshow window
 
             # Convert OpenCV image to ROS Image message
-            image_msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='bgr8')
+            image_msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='mono8')
             image_msg.header.stamp = self.get_clock().now().to_msg()
             image_msg.header = msg.header
             publisher.publish(image_msg)

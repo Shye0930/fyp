@@ -30,7 +30,7 @@ class ImageCompressor(Node):
         self.jpeg_quality = self.get_parameter('jpeg_quality').value
 
         # Publisher for compressed images
-        self.publisher = self.create_publisher(CompressedImage, output_topic, qos)
+        self.publisher = self.create_publisher(CompressedImage, output_topic, qos_profile_sensor_data)
         # Subscriber for raw images
         self.subscription = self.create_subscription(
             Image, input_topic, self.image_callback, qos_profile_sensor_data
