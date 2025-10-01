@@ -2,8 +2,8 @@ import rclpy
 from rclpy.node import Node
 from rclpy.parameter import Parameter # Import Parameter for explicit parameter declaration
 from sensor_msgs.msg import Image, CameraInfo
-from cv_bridge import CvBridge
 import cv2
+from cv_bridge import CvBridge
 import numpy as np
 from std_msgs.msg import Bool  # Import for boolean message
 
