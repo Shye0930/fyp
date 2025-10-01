@@ -23,7 +23,7 @@ class StereoImageDecompressor(Node):
         # Parameters
         self.declare_parameter('input_topic', '/camera/stereo/compressed')
         self.declare_parameter('left_output_topic', '/camera/stereo/left_decompressed')
-        self.declare_parameter('right_output_topic', '/stereo/right_decompressed')
+        self.declare_parameter('right_output_topic', '/camera/stereo/right_decompressed')
         self.declare_parameter('image_width', 640)
         self.declare_parameter('image_height', 480)
 
