@@ -17,7 +17,7 @@ class ImageDecompressor(Node):
 
         # QoS profile for sensor data (best effort, keep last 10)
         qos = QoSProfile(
-            reliability=ReliabilityPolicy.BEST_EFFORT,
+            reliability=ReliabilityPolicy.RELIABLE,
             history=HistoryPolicy.KEEP_LAST,
             depth=10
         )
@@ -30,10 +30,10 @@ class ImageDecompressor(Node):
         output_topic = self.get_parameter('output_topic').value
 
         # Publisher for decompressed (raw) images
-        self.publisher = self.create_publisher(Image, output_topic, qos_profile_sensor_data)
+        self.publisher = self.create_publisher(Image, output_topic, qos)
         # Subscriber for compressed images
         self.subscription = self.create_subscription(
-            CompressedImage, input_topic, self.compressed_image_callback, qos_profile_sensor_data
+            CompressedImage, input_topic, self.compressed_image_callback, qos
         )
 
         self.get_logger().info(f"Subscribing to {input_topic}, publishing to {output_topic}")

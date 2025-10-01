@@ -15,7 +15,7 @@ class ImageCompressor(Node):
 
         # QoS profile for sensor data (best effort, keep last 10)
         qos = QoSProfile(
-            reliability=ReliabilityPolicy.BEST_EFFORT,
+            reliability=ReliabilityPolicy.RELIABLE,
             history=HistoryPolicy.KEEP_LAST,
             depth=10
         )
@@ -30,10 +30,10 @@ class ImageCompressor(Node):
         self.jpeg_quality = self.get_parameter('jpeg_quality').value
 
         # Publisher for compressed images
-        self.publisher = self.create_publisher(CompressedImage, output_topic, qos_profile_sensor_data)
+        self.publisher = self.create_publisher(CompressedImage, output_topic, qos)
         # Subscriber for raw images
         self.subscription = self.create_subscription(
-            Image, input_topic, self.image_callback, qos_profile_sensor_data
+            Image, input_topic, self.image_callback, qos
         )
 
         self.get_logger().info(f"Subscribing to {input_topic}, publishing to {output_topic}")
