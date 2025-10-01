@@ -8,6 +8,7 @@ import numpy as np
 from cv_bridge import CvBridge
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 from rclpy.qos import qos_profile_sensor_data
+from rclpy.clock import Clock
 
 class ImageDecompressor(Node):
     def __init__(self):
@@ -53,6 +54,7 @@ class ImageDecompressor(Node):
 
             # Convert OpenCV image to ROS Image message
             image_msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='bgr8')
+            image_msg.header.stamp = self.get_clock().now().to_msg()
             image_msg.header = msg.header
             publisher.publish(image_msg)
             self.get_logger().info(f"{label}: Published decompressed image")
