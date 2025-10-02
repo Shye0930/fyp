@@ -11,7 +11,6 @@
 #define LED_PIN_TEST 18
 #define MOTOR_PWM_PIN 18 // PWM pin for motor control
 bool led_test_state = false;
-bool prevent_spam = true;
 
 bool motor_state = false;
 
@@ -38,37 +37,23 @@ rcl_publisher_t motor_pub; // New publisher for motor state
 std_msgs__msg__Bool obstacle_msg;
 std_msgs__msg__Bool motor_state_msg; // Message for the new publisher
 
-unsigned long startTime = 0;
-
 void obstacle_callback(const void *msgin) {
   const std_msgs__msg__Bool *obstacle_msg = (std_msgs__msg__Bool *)msgin;
   // Set the motor state based on the obstacle detection
   
-  startTime = 0;
 
   if(obstacle_msg->data){
-    startTime = millis();
     motor_state = true;
     digitalWrite(MOTOR_PWM_PIN, LOW);
-    // Serial.print("Obstacle detected: ", obstacle_msg->data ? "true" : "false");
-    if(prevent_spam){
-      prevent_spam = false;
-      Serial.print("Time (ms): ");
-      Serial.print(startTime);
-      Serial.print(" | Obstacle detected: ");
-      Serial.println(obstacle_msg->data ? "true" : "false");
-    }
   }else{
     motor_state = false;
-    prevent_spam = true;
     digitalWrite(MOTOR_PWM_PIN, HIGH);
   }
 
-
-  // Publish the motor state
-  motor_state_msg.data = motor_state;
-  rcl_publish(&motor_pub, &motor_state_msg, NULL);
    
+  // Print the obstacle detection status
+  Serial.print("Obstacle detected: ");
+  Serial.println(obstacle_msg->data ? "true" : "false");
 }
 
 bool create_entities()
@@ -84,14 +69,6 @@ bool create_entities()
   rclc_support_init_with_options(&support, 0, NULL, &init_options, &allocator);
   rclc_node_init_default(&node, node_name, ns, &support);
 
-  // Initialize the publisher for motor state
-  rclc_publisher_init_default(
-    &motor_pub,
-    &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Bool),
-    "/motor_vibrating"
-  );
-
   // Initialize the subscription for obstacle detection
   rclc_subscription_init(
     &obstacle_sub,
@@ -99,6 +76,14 @@ bool create_entities()
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Bool),
     "/obstacle_detected",
     &rmw_qos_profile_default
+  );
+
+  // Initialize the publisher for motor state
+  rclc_publisher_init_default(
+    &motor_pub,
+    &node,
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Bool),
+    "/motor_vibrating"
   );
 
   unsigned int num_handles = 1;
@@ -127,7 +112,7 @@ void setup() {
   Serial.println("Setting up");
 
   //set_microros_transports();
-  set_microros_wifi_transports("ssid", "pwd", "10.0.1.4", 8888); //ip is of host machine
+  set_microros_wifi_transports("ssid", "password", "hostmachine", 8888);
 
   pinMode(LED_PIN, OUTPUT);
   pinMode(LED_PIN_TEST, OUTPUT);
@@ -154,9 +139,9 @@ void loop() {
       if (state == AGENT_CONNECTED) {
         rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100));
 
-        // // Publish the motor state
-        // motor_state_msg.data = motor_state;
-        // rcl_publish(&motor_pub, &motor_state_msg, NULL);
+        // Publish the motor state
+        motor_state_msg.data = motor_state;
+        rcl_publish(&motor_pub, &motor_state_msg, NULL);
       }
       break;
     case AGENT_DISCONNECTED:
@@ -167,14 +152,12 @@ void loop() {
       break;
   }
 
-
-
-  // // Update LED and motor based on current state
-  // if (state == AGENT_CONNECTED) {
-  //   digitalWrite(LED_PIN, 1);
-  // } else {
-  //   digitalWrite(LED_PIN, 0);
-  // }
+  // Update LED and motor based on current state
+  if (state == AGENT_CONNECTED) {
+    digitalWrite(LED_PIN, 1);
+  } else {
+    digitalWrite(LED_PIN, 0);
+  }
 
 
 }

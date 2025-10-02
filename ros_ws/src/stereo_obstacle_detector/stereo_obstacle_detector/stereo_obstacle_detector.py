@@ -186,9 +186,10 @@ class StereoObstacleDetector(Node):
                 obstacle_detected = True
                 if self.prevent_spam:
                     self.prevent_spam = False
-                    # Print the timestamp till the second
+                    # Print the timestamp till the millisecond
                     timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-                    self.get_logger().info(f"[{timestamp}] OBSTACLE DETECTED! Minimum distance: {min_depth_in_roi:.2f} m")
+                    milliseconds = int(time.time() * 1000) % 1000
+                    self.get_logger().info(f"[{timestamp}.{milliseconds:03d}] OBSTACLE DETECTED! Minimum distance: {min_depth_in_roi:.2f} m")
             else:
                 self.prevent_spam = True 
 
