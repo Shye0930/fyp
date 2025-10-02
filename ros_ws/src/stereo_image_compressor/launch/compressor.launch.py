@@ -14,7 +14,7 @@ def generate_launch_description():
 
         Node(
             package='stereo_image_compressor',
-            executable='compressor',
+            executable='rgbd_compressor',
             name='stereo_image_compressor',
             output='screen',
             parameters=[{

@@ -24,6 +24,8 @@ setup(
         'console_scripts': [
             'compressor = stereo_image_compressor.compressor_node:main',
             'decompressor = stereo_image_compressor.decompressor_node:main',
+            'rgbd_compressor = stereo_image_compressor.rgbd_compressor_node:main',
+            'rgbd_decompressor = stereo_image_compressor.rgbd_decompressor_node:main',
         ],
     },
 )
