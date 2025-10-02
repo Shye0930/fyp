@@ -6,6 +6,7 @@ import cv2
 from cv_bridge import CvBridge
 import numpy as np
 from std_msgs.msg import Bool  # Import for boolean message
+import time
 
 
 # Assuming envision_interfaces.msg.ObstacleStatus is defined
@@ -185,7 +186,9 @@ class StereoObstacleDetector(Node):
                 obstacle_detected = True
                 if self.prevent_spam:
                     self.prevent_spam = False
-                    self.get_logger().info(f"OBSTACLE DETECTED! Minimum distance: {min_depth_in_roi:.2f} m")
+                    # Print the timestamp till the second
+                    timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                    self.get_logger().info(f"[{timestamp}] OBSTACLE DETECTED! Minimum distance: {min_depth_in_roi:.2f} m")
             else:
                 self.prevent_spam = True 
 
