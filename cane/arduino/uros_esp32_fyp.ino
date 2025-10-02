@@ -143,7 +143,7 @@ void setup() {
   Serial.println("Setting up");
 
   //set_microros_transports();
-  set_microros_wifi_transports("fyp", "ad28kxcp", "10.0.1.4", 8888);
+  set_microros_wifi_transports("ssid", "pwd", "10.0.1.4", 8888); //ip is host machine 
 
   pinMode(LED_PIN, OUTPUT);
   pinMode(LED_PIN_TEST, OUTPUT);
@@ -153,7 +153,7 @@ void setup() {
   motor_state_msg.data = false; // Initialize the new message
   state = WAITING_AGENT;
 
-  WiFi.begin("fyp", "ad28kxcp");
+  WiFi.begin("ssid", "pwd");
 
   Serial.print("Connecting to Wi-Fi");
   while (WiFi.status() != WL_CONNECTED) {
