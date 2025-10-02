@@ -6,6 +6,8 @@
 #include <rclc/executor.h>
 #include <rmw_microros/rmw_microros.h>
 #include <std_msgs/msg/bool.h>
+#include <WiFi.h>
+#include "time.h"
 
 #define LED_PIN 23
 #define LED_PIN_TEST 18
@@ -14,6 +16,11 @@ bool led_test_state = false;
 bool prevent_spam = true;
 
 bool motor_state = false;
+
+// Singapore timezone (UTC+8)
+const char* ntpServer = "pool.ntp.org";
+const long  gmtOffset_sec = 8 * 3600; // UTC+8
+const int   daylightOffset_sec = 0;
 
 #define EXECUTE_EVERY_N_MS(MS, X)  do { \
     static volatile int64_t init = -1; \
@@ -41,35 +48,44 @@ std_msgs__msg__Bool motor_state_msg; // Message for the new publisher
 unsigned long startTime = 0;
 
 void obstacle_callback(const void *msgin) {
-  const std_msgs__msg__Bool *obstacle_msg = (std_msgs__msg__Bool *)msgin;
-  // Set the motor state based on the obstacle detection
-  
-  startTime = 0;
+  const std_msgs__msg__Bool *obstacle_msg_in = (std_msgs__msg__Bool *)msgin;
 
-  if(obstacle_msg->data){
-    startTime = millis();
+  if (obstacle_msg_in->data) {
     motor_state = true;
     digitalWrite(MOTOR_PWM_PIN, LOW);
-    // Serial.print("Obstacle detected: ", obstacle_msg->data ? "true" : "false");
-    if(prevent_spam){
-      prevent_spam = false;
-      Serial.print("Time (ms): ");
-      Serial.print(startTime);
-      Serial.print(" | Obstacle detected: ");
-      Serial.println(obstacle_msg->data ? "true" : "false");
+
+    if (prevent_spam) {
+      prevent_spam = false; 
+
+      // Get local Singapore time
+      struct tm timeinfo;
+      if (getLocalTime(&timeinfo)) {
+        // Milliseconds within the current second
+        unsigned long ms = millis() % 1000;
+
+        // Print timestamp + obstacle flag
+        Serial.printf("%02d:%02d:%02d.%03lu | Obstacle detected: true\n",
+                      timeinfo.tm_hour,
+                      timeinfo.tm_min,
+                      timeinfo.tm_sec,
+                      ms);
+      } else {
+        Serial.println("Failed to get local time | Obstacle detected: true");
+      }
     }
-  }else{
+
+  } else {
     motor_state = false;
-    prevent_spam = true;
     digitalWrite(MOTOR_PWM_PIN, HIGH);
+    prevent_spam = true; // reset spam prevention when obstacle is gone
   }
 
-
-  // Publish the motor state
+  // Publish motor state
   motor_state_msg.data = motor_state;
   rcl_publish(&motor_pub, &motor_state_msg, NULL);
-   
 }
+
+
 
 bool create_entities()
 {
@@ -127,7 +143,7 @@ void setup() {
   Serial.println("Setting up");
 
   //set_microros_transports();
-  set_microros_wifi_transports("ssid", "pwd", "10.0.1.4", 8888); //ip is of host machine
+  set_microros_wifi_transports("fyp", "ad28kxcp", "10.0.1.4", 8888);
 
   pinMode(LED_PIN, OUTPUT);
   pinMode(LED_PIN_TEST, OUTPUT);
@@ -136,6 +152,16 @@ void setup() {
   obstacle_msg.data = false;
   motor_state_msg.data = false; // Initialize the new message
   state = WAITING_AGENT;
+
+  WiFi.begin("fyp", "ad28kxcp");
+
+  Serial.print("Connecting to Wi-Fi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println(" connected!");
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 }
 
 void loop() {
