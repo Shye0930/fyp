@@ -9,13 +9,13 @@ import struct
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 
 
-class DepthDecompressor(Node):
+class RealsenseImageDecompressor(Node):
     """
-    ROS 2 Node that subscribes to compressedDepth topic and republishes as Image.
+    ROS 2 Node that subscribes to compressed RGB and Depth topics and republishes as Image.
     """
 
     def __init__(self):
-        super().__init__('depth_decompressor')
+        super().__init__('realsense_image_decompressor')
         self.bridge = CvBridge()
 
         qos = QoSProfile(
@@ -24,23 +24,53 @@ class DepthDecompressor(Node):
             depth=10
         )
 
-        # Parameters
+        # Parameters for RGB
+        self.declare_parameter('compressed_rgb_topic', '/camera/color/image_raw/compressed')
+        self.declare_parameter('decompressed_rgb_topic', '/decompressed_rgb')
+
+        # Parameters for Depth
         self.declare_parameter('compressed_depth_topic', '/camera/depth/image_rect_raw/compressedDepth')
         self.declare_parameter('decompressed_depth_topic', '/decompressed_depth')
 
+        self.compressed_rgb_topic = self.get_parameter('compressed_rgb_topic').value
+        self.decompressed_rgb_topic = self.get_parameter('decompressed_rgb_topic').value
         self.compressed_depth_topic = self.get_parameter('compressed_depth_topic').value
         self.decompressed_depth_topic = self.get_parameter('decompressed_depth_topic').value
 
-        # Publisher
+        # Publishers
+        self.rgb_pub = self.create_publisher(Image, self.decompressed_rgb_topic, qos)
         self.depth_pub = self.create_publisher(Image, self.decompressed_depth_topic, qos)
 
-        # Subscriber
+        # Subscribers
+        self.create_subscription(CompressedImage, self.compressed_rgb_topic, self.rgb_callback, qos)
         self.create_subscription(CompressedImage, self.compressed_depth_topic, self.depth_callback, qos)
 
         self.get_logger().info(
-            f"Subscribing to compressedDepth -> {self.compressed_depth_topic}, "
-            f"publishing decompressed -> {self.decompressed_depth_topic}"
+            f"Subscribing to compressed RGB -> {self.compressed_rgb_topic}, "
+            f"compressedDepth -> {self.compressed_depth_topic}, "
+            f"publishing decompressed RGB -> {self.decompressed_rgb_topic}, "
+            f"decompressed Depth -> {self.decompressed_depth_topic}"
         )
+
+    def rgb_callback(self, msg: CompressedImage):
+        try:
+            if "jpeg" not in msg.format.lower():
+                self.get_logger().warn("Message format not JPEG")
+                return
+
+            # Decode JPEG to OpenCV image
+            np_arr = np.frombuffer(msg.data, np.uint8)
+            cv_img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+            if cv_img is None:
+                self.get_logger().warn("JPEG decode failed")
+                return
+
+            # Convert back to Image msg (BGR8 encoding)
+            decompressed_msg = self.bridge.cv2_to_imgmsg(cv_img, encoding='bgr8')
+            decompressed_msg.header = msg.header
+            self.rgb_pub.publish(decompressed_msg)
+        except Exception as e:
+            self.get_logger().error(f"Error decompressing RGB: {e}")
 
     def depth_callback(self, msg: CompressedImage):
         try:
@@ -81,7 +111,7 @@ class DepthDecompressor(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = DepthDecompressor()
+    node = RealsenseImageDecompressor()
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:

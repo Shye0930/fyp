@@ -33,7 +33,7 @@ class RealsenseImageCompressor(Node):
         self.declare_parameter('depth_topic', '/camera/camera/aligned_depth_to_color/image_raw')
         self.declare_parameter('rgb_compressed_topic', '/camera/color/image_raw/compressed')
         self.declare_parameter('depth_compressed_topic', '/camera/depth/image_rect_raw/compressedDepth')
-        self.declare_parameter('jpeg_quality', 100)
+        self.declare_parameter('jpeg_quality', 80)
         self.declare_parameter('png_level', 1)  # PNG compression level (0-9, lower is faster)
 
         self.rgb_topic = self.get_parameter('rgb_topic').value
