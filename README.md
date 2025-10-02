@@ -138,17 +138,6 @@ ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888
 ![navigation terminal serial](assets/img/navigation_serial_terminal.png)
 
 
-## TODO:
-- [ ] Use pyttsx3 for text to speech (navigation)
-
-```python
-import pyttsx3
-engine = pyttsx3.init()
-engine.setProperty("rate", 150)
-engine.say("I will speak this text")
-engine.runAndWait()
-```
-
 
 ## List of ros2 packages used in the project
 Below is a comprehensive list of the ROS 2 packages integrated into this project. Each package is linked to its respective section for detailed setup and execution instructions.
@@ -160,8 +149,32 @@ Below is a comprehensive list of the ROS 2 packages integrated into this project
 - [Navigational Speaker](./assets/project_components.md#navigational-speaker): Converts text to speech for navigational audio feedback.
 - ~~[Pointcloud to Grid](./assets/project_components.md#pointcloud-to-grid): Converts point cloud data into 2D occupancy grids for mapping and navigation.~~ (Package not in used cause it requires lidar to calculate intensity)
 - [Envision Pointcloud to Grid](./assets/project_components.md#envision-pointcloud-to-grid): Converts point cloud data into 2D occupancy grids for mapping, goal mapping and navigation. 
+- [Stereo Image Compressor](./assets/project_components.md#stereo-image-compressor): Converts point cloud data into 2D occupancy grids for mapping, goal mapping and navigation. 
+
 
 Explore each section for detailed configuration and usage instructions specific to each package.
+
+## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;">ROS2 Transmitting frames wirelessly Misc Stuff</h2>
+
+Edit the topics accordingly in the launch files
+
+### **Host machine**
+```sh
+# Stereo
+ros2 launch stereo_image_compressor compressor.launch.py
+
+# RGBD
+ros2 launch stereo_image_compressor rgbd_compress.launch.py
+```
+
+### **Receiver machine**
+```sh
+# Stereo
+ros2 launch stereo_image_compressor decompressor.launch.py
+
+# RGBD
+ros2 launch stereo_image_compressor rgbd_decompress.launch.py 
+```
 
 
 ## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;">ROS2 Bag Record Misc Stuff</h2>

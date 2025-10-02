@@ -72,7 +72,7 @@ class StereoImageDecompressor(Node):
             # Publish
             self.left_publisher.publish(left_msg)
             self.right_publisher.publish(right_msg)
-            self.get_logger().info("Published decompressed left and right images")
+            # self.get_logger().info("Published decompressed left and right images")
 
         except Exception as e:
             self.get_logger().error(f"Error decompressing image: {str(e)}")

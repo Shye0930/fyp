@@ -44,6 +44,8 @@ class StereoObstacleDetector(Node):
         self.declare_parameter('left_topic', '/stereo/left/rectified_images')
         self.declare_parameter('right_topic', '/stereo/right/rectified_images')
 
+        self.prevent_spam = True  # To control logging frequency
+
         left_topic = self.get_parameter('left_topic').value
         right_topic = self.get_parameter('right_topic').value
 
@@ -181,7 +183,11 @@ class StereoObstacleDetector(Node):
             obstacle_detected = False
             if min_depth_in_roi > 0.75 and min_depth_in_roi < obstacle_distance_threshold_m:
                 obstacle_detected = True
-                self.get_logger().info(f"OBSTACLE DETECTED! Minimum distance: {min_depth_in_roi:.2f} m")
+                if self.prevent_spam:
+                    self.prevent_spam = False
+                    self.get_logger().info(f"OBSTACLE DETECTED! Minimum distance: {min_depth_in_roi:.2f} m")
+            else:
+                self.prevent_spam = True 
 
             # Publish obstacle status
             status_msg = ObstacleStatus()

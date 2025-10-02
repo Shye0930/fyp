@@ -10,11 +10,11 @@ def generate_launch_description():
         DeclareLaunchArgument('compressed_topic', default_value='/camera/stereo/compressed', description='Compressed output topic'),
         DeclareLaunchArgument('image_width', default_value='640', description='Individual image width'),
         DeclareLaunchArgument('image_height', default_value='480', description='Individual image height'),
-        DeclareLaunchArgument('jpeg_quality', default_value='100', description='JPEG compression quality'),
+        DeclareLaunchArgument('jpeg_quality', default_value='10', description='JPEG compression quality'),
 
         Node(
             package='stereo_image_compressor',
-            executable='rgbd_compressor',
+            executable='compressor',
             name='stereo_image_compressor',
             output='screen',
             parameters=[{

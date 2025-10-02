@@ -75,7 +75,7 @@ class StereoImageCompressor(Node):
             compressed_msg.format = 'jpeg'
             compressed_msg.data = jpeg_bytes
             self.publisher.publish(compressed_msg)
-            self.get_logger().info("Published compressed stitched image")
+            # self.get_logger().info("Published compressed stitched image")
 
         except Exception as e:
             self.get_logger().error(f"Error processing images: {str(e)}")

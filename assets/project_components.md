@@ -447,4 +447,25 @@ This project includes three main executable components:
    ```
 
 
+## <h2 style="color:#1F1F1F; background-color:#B0B0B0; text-align:center; text-style:bold; font-family:'Chalkboard' ;">Stereo Image Compressor</h2>
 
+### **Overview**
+The `stereo_image_compressor` package is developed to stream over constrained links (e.g., Wi‑Fi) or recording compact bag files while keeping a simple, ROS-native workflow. The main goal is to allow image topics to be published and subscribed across different distributed machine
+
+## **What’s included**
+
+Executables (console scripts):
+
+- Stereo
+	- `compressor` → `stereo_image_compressor/compressor_node.py`
+	- `decompressor` → `stereo_image_compressor/decompressor_node.py`
+- RGB‑D
+	- `rgbd_compressor` → `stereo_image_compressor/rgbd_compressor_node.py`
+	- `rgbd_decompressor` → `stereo_image_compressor/rgbd_decompressor_node.py`
+
+Launch files (in `launch/`):
+
+- `compressor.launch.py` (stereo stitched JPEG)
+- `decompressor.launch.py` (stereo stitched JPEG)
+- `rgbd_compress.launch.py` (RGB‑D JPEG + compressedDepth)
+- `rgbd_decompress.launch.py` (RGB‑D decompression)
