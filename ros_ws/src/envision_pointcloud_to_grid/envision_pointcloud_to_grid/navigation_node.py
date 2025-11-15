@@ -121,7 +121,7 @@ class NavigationNode(Node):
             # Load the map first
             self.load_map()
             self.current_pose = Pose()
-            self.current_pose.position = Point(x=self.start_x, y=self.start_y, z=0)
+            self.current_pose.position = Point(x=self.start_x, y=self.start_y, z=0.0)
             self.current_pose.orientation = Quaternion(x=0.0, y=0.0, z=0.0, w=1.0)
             self.publish_start_pose()
             self.get_logger().info(f'Using fixed start position: ({self.start_x}, {self.start_y}) since no camera pose is available')
@@ -474,10 +474,11 @@ class NavigationNode(Node):
             return True
         return False
     
+    
     def pose_callback(self, msg):
         """Handle camera pose updates and trigger path calculation."""
 
-         # Wait for transform
+        # Wait for transform
         self.transform = self.tf_buffer.lookup_transform(
             'world',
             'map',
@@ -503,14 +504,22 @@ class NavigationNode(Node):
             else:
                 self.get_logger().info('Calculating path...')
                 self.calculate_90_degree_path()
-            
-            # After calculating path, output the first instruction if available
-            # if self.segment_instructions:
-            #     self.get_logger().info('Starting navigation with first instruction:')
-            #     self.get_logger().info(self.segment_instructions[0])
-            #     engine.say(self.segment_instructions[self.current_segment])
-            #     engine.runAndWait()
-            #     engine.stop()
+                
+                # After calculating path, output the instruction if available
+                # if self.segment_instructions:
+                    # self.get_logger().info('Starting navigation with first instruction:')
+                    # self.get_logger().info(self.segment_instructions[0])
+                    # engine.say(self.segment_instructions[0])
+                    # engine.runAndWait()
+                    # engine.stop()
+
+            if self.segment_instructions:
+                time.sleep(20)
+                self.get_logger().info('Starting navigation with first instruction:')
+                self.get_logger().info(self.segment_instructions[0])
+                engine.say(self.segment_instructions[0])
+                engine.runAndWait()
+                engine.stop()
         else:
             # Extract position from current_pose
             pos = self.current_pose.pose.position if isinstance(self.current_pose, PoseStamped) else self.current_pose.position
@@ -519,8 +528,8 @@ class NavigationNode(Node):
             dx = pos.x - self.goal_x
             dy = pos.y - self.goal_y
             distance = math.sqrt(dx**2 + dy**2)
-            # self.get_logger().info(f'Distance to goal: {distance:.2f} meters')
-            if distance <= (self.goal_radius - 1.5) and not self.goal_reached:
+            
+            if distance <= self.goal_radius and not self.goal_reached:  # Fixed: removed the "- 1.5"
                 self.goal_reached = True
                 goal_reached_msg = Bool()
                 goal_reached_msg.data = True
@@ -529,24 +538,28 @@ class NavigationNode(Node):
                 engine.say("You have reached your destination")
                 engine.runAndWait()
                 engine.stop()
-                
 
-            # Check if reached the next checkpoint
+            # Check if reached the next checkpoint (but not the final goal)
             elif not self.goal_reached and self.current_segment < len(self.segment_instructions):
-                next_cp_index = self.current_segment + 1
+                next_cp_index = self.current_segment + 1  # The checkpoint we're heading toward
                 if next_cp_index < len(self.checkpoints.poses):
                     next_cp = self.checkpoints.poses[next_cp_index]
                     dx = pos.x - next_cp.position.x
                     dy = pos.y - next_cp.position.y
                     dist = math.sqrt(dx**2 + dy**2)
+                    
+                    self.get_logger().info(f'Distance to checkpoint {next_cp_index}: {dist:.2f} meters')
+                    
                     if dist <= self.goal_radius * 1.5:
+                        self.current_segment += 1  # Increment FIRST
+                        
+                        # Then announce the next instruction if available
                         if self.current_segment < len(self.segment_instructions):
-                            self.get_logger().info('Reached checkpoint! Next instruction:')
+                            self.get_logger().info(f'Reached checkpoint {next_cp_index}! Next instruction:')
                             engine.say(self.segment_instructions[self.current_segment])
                             engine.runAndWait()
                             engine.stop()
                             self.get_logger().info(self.segment_instructions[self.current_segment])
-                        self.current_segment += 1
 
     def timer_callback(self):
         """Publish the planned path, map, and goal pose if calculated."""

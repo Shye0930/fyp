@@ -18,7 +18,7 @@ def generate_launch_description():
                 {'goal_radius': 1},
                 {'pose_topic': '/orb_slam3/camera_pose'},
                 {'goal_frame': 'world'},
-                {'map_path': '/home/shye0930/Desktop/fyp/maps/hesl/occu_map'},
+                {'map_path': '/home/shye0930/Desktop/fyp/maps/kitchen_stereo/occu_map'},
                 {'visualization_mode': 'matplotlib'},  # Options: 'matplotlib (working)', 'rviz2', 'none'
             ]
         ),

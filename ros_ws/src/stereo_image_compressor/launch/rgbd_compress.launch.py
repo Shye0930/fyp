@@ -33,7 +33,7 @@ def generate_launch_description():
         # Compression Settings
         DeclareLaunchArgument(
             'jpeg_quality',
-            default_value='100',
+            default_value='50',
             description='JPEG compression quality (0-100).'
         ),
         
